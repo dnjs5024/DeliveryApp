@@ -1,0 +1,32 @@
+package com.example.delivery.common.exception.enums;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+@AllArgsConstructor
+public enum SuccessCode {
+    // 공통
+    OK(HttpStatus.OK, "요청이 성공적으로 처리되었습니다."),
+
+    // 가게 관련
+    STORE_CREATED(HttpStatus.CREATED, "가게가 성공적으로 생성되었습니다."),
+    STORE_UPDATED(HttpStatus.OK, "가게 정보가 성공적으로 수정되었습니다."),
+    STORE_CLOSED(HttpStatus.OK, "가게가 성공적으로 폐업 처리되었습니다."),
+
+    // 메뉴 관련
+    MENU_CREATED(HttpStatus.CREATED, "메뉴가 성공적으로 등록되었습니다."),
+    MENU_UPDATED(HttpStatus.OK, "메뉴가 성공적으로 수정되었습니다."),
+    MENU_DELETED(HttpStatus.OK, "메뉴가 성공적으로 삭제되었습니다."),
+
+    // 주문 관련
+    ORDER_CREATED(HttpStatus.CREATED, "주문이 성공적으로 완료되었습니다."),
+    ORDER_STATUS_UPDATED(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다."),
+
+    // 리뷰 관련
+    REVIEW_CREATED(HttpStatus.CREATED, "리뷰가 성공적으로 등록되었습니다.");
+
+    private final HttpStatus httpStatus;
+    private final String message;
+}
