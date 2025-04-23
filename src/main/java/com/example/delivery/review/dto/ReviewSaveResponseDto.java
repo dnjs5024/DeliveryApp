@@ -1,12 +1,9 @@
 package com.example.delivery.review.dto;
 
-import com.example.delivery.review.entity.Review;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+import com.example.delivery.domain.review.entity.Review;
 import java.time.LocalDateTime;
-import lombok.Builder;
+
 import lombok.Getter;
 
 @Getter

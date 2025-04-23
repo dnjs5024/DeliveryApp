@@ -1,6 +1,8 @@
 package com.example.delivery.domain.review.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
+import com.example.delivery.domain.store.entity.Store;
+import com.example.delivery.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,13 +27,13 @@ public class Review extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY) // 구현 후 주석 풀고 사용
-//    @JoinColumn(name = "store_id")
-//    private Store store;
-//
-//    @ManyToOne(fetch = FetchType.LAZY) // 구현 후 주석 풀고 사용
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column
     private String content; // 리뷰내용
@@ -42,17 +44,17 @@ public class Review extends BaseTimeEntity {
     @Column
     private Integer rating; // 별점
 
-//    private Review(Store store, User user, String content, String imgUrl, Integer rating) {
-//        this.store = store;
-//        this.user = user;
-//        this.content = content;
-//        this.imgUrl = imgUrl;
-//        this.rating = rating;
-//    }
-//
-//    @Builder
-//    public static Review of(Store store, User user, String content, String imgUrl, Integer rating){
-//      return new Review(store, user, content, imgUrl, rating);
-//    }
+    private Review(Store store, User user, String content, String imgUrl, Integer rating) {
+        this.store = store;
+        this.user = user;
+        this.content = content;
+        this.imgUrl = imgUrl;
+        this.rating = rating;
+    }
+
+    @Builder
+    public static Review of(Store store, User user, String content, String imgUrl, Integer rating){
+      return new Review(store, user, content, imgUrl, rating);
+    }
 
 }

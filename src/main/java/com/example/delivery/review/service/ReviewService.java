@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ReviewService {
 
-    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, MultipartFile file);
+    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, List<MultipartFile> file);
     
 
     public void deleteReview(Long reviewId);

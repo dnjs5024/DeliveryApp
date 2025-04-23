@@ -1,6 +1,7 @@
 package com.example.delivery.review.service;
 
 import com.example.delivery.common.service.ImageUploadService;
+import com.example.delivery.domain.user.repository.UserRepository;
 import com.example.delivery.review.dto.ReviewFindResponseDto;
 import com.example.delivery.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.review.dto.ReviewSaveResponseDto;
@@ -21,15 +22,18 @@ public class ReviewServiceImpl implements ReviewService{
 
 //    private final StoreRepository storeRepository;
 
-//      private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, MultipartFile file) {
+    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, List<MultipartFile> file) {
+
+       List<String> list = imageUploadService.uploadFile(file);
+       list.stream().forEach(System.out::println);
 
 //        Store store = storeRepository.findById(requestDto.getStoreId());
 //        User user = userRepository.findById(requestDto.getUserId());
-
+//
 //        Review review = new Review(
 //            requestDto.getContent(),
 //            requestDto.getImgUrl(),
@@ -37,7 +41,7 @@ public class ReviewServiceImpl implements ReviewService{
 //            store,
 //            user
 //            );
-
+//
 //        return new ReviewSaveResponseDto(reviewRepository.save(review));
         return null;
     }
@@ -51,9 +55,13 @@ public class ReviewServiceImpl implements ReviewService{
         return null;
     }
 
+    /**
+     * 리뷰 삭제 메소드
+     * @param reviewId 리뷰 ID
+     */
     @Override
     public void deleteReview(Long reviewId) {
-
+        reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));
     }
 
     @Override
