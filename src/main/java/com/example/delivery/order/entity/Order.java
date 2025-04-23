@@ -2,15 +2,13 @@ package com.example.delivery.order.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Builder
 @Entity
-@Table(name ="order")
+@Table(name ="orders")
 public class Order extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,8 +31,7 @@ public class Order extends BaseTimeEntity {
 
     public Order(){;}
 
-    public Order(Long id, OrderStatus orderStatus, List<OrderMenu> orderMenuList) {
-        this.id = id;
+    public Order(OrderStatus orderStatus, List<OrderMenu> orderMenuList) {
         this.orderStatus = orderStatus;
         this.orderMenuList = orderMenuList;
     }

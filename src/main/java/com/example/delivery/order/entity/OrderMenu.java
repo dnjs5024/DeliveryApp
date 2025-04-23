@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.apache.catalina.Store;
 
-@Builder
 @Entity
 @Table(name ="order_menu")
 public class OrderMenu {
@@ -25,8 +24,7 @@ public class OrderMenu {
 
     public OrderMenu(){;}
 
-    public OrderMenu(Long id, int quantity, Order order) {
-        this.id = id;
+    public OrderMenu(int quantity, Order order) {
         this.quantity = quantity;
         this.order = order;
     }
