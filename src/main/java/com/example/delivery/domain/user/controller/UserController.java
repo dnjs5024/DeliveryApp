@@ -1,11 +1,10 @@
-package com.example.delivery.user.controller;
+package com.example.delivery.domain.user.controller;
 
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
-import com.example.delivery.user.dto.UserRequestDto;
-import com.example.delivery.user.dto.UserResponseDto;
-import com.example.delivery.user.service.UserService;
-import jakarta.servlet.http.HttpServlet;
+import com.example.delivery.domain.user.dto.UserRequestDto;
+import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
