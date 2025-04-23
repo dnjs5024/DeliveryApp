@@ -1,4 +1,5 @@
 package com.example.delivery.user.entity;
+import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
