@@ -1,8 +1,8 @@
-package com.example.delivery.user.repository;
+package com.example.delivery.domain.user.repository;
 
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
-import com.example.delivery.user.entity.User;
+import com.example.delivery.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

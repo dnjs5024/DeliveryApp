@@ -1,16 +1,19 @@
-package com.example.delivery.user.controller;
+package com.example.delivery.domain.user.controller;
 
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
-import com.example.delivery.user.dto.LoginRequestDto;
-import com.example.delivery.user.dto.UserRequestDto;
-import com.example.delivery.user.dto.UserResponseDto;
-import com.example.delivery.user.entity.User;
-import com.example.delivery.user.service.UserService;
+import com.example.delivery.domain.user.dto.LoginRequestDto;
+import com.example.delivery.domain.user.dto.UserRequestDto;
+import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.entity.User;
+import com.example.delivery.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import com.example.delivery.domain.user.dto.UserRequestDto;
+import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +47,7 @@ public class UserController {
         // 세션 있는지 확인
         if (session != null) {
             User existingUser = (User) session.getAttribute("loginUser");
-            
+
             // 탈퇴한 사용자인지 확인
             if (existingUser != null && existingUser.getWithdrawTime() != null) {
                 throw new CustomException(ErrorCode.ALREADY_WITHDRAWN);

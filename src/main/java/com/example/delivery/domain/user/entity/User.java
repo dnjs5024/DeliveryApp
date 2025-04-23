@@ -1,4 +1,4 @@
-package com.example.delivery.user.entity;
+package com.example.delivery.domain.user.entity;
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
