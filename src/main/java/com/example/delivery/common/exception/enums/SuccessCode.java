@@ -10,6 +10,12 @@ public enum SuccessCode {
     // 공통
     OK(HttpStatus.OK, "요청이 성공적으로 처리되었습니다."),
 
+    // 유저 관련
+    SIGNUP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료되었습니다."),
+    LOGIN_SUCCESS(HttpStatus.OK, "로그인에 성공하였습니다."),
+    LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃에 성공하였습니다."),
+    WITHDRAWAL_SUCCESS(HttpStatus.OK, "회원 탈퇴가 정상적으로 처리되었습니다."),
+
     // 가게 관련
     STORE_CREATED(HttpStatus.CREATED, "가게가 성공적으로 생성되었습니다."),
     STORE_UPDATED(HttpStatus.OK, "가게 정보가 성공적으로 수정되었습니다."),
