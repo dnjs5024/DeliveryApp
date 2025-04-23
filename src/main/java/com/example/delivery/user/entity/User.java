@@ -2,10 +2,11 @@ package com.example.delivery.user.entity;
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+@Getter
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
@@ -39,10 +40,10 @@ public class User extends BaseTimeEntity{
         OWNER
     }
 
-    public User(String username, String email, String password, Role role) {
-        this.username = username;
+    public User(String email, String password, Role role, String username) {
         this.email = email;
-        this.password = password;
+        this.username = username;
         this.role = role;
+        this.password = password;
     }
 }
