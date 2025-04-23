@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    @Transactional
     public UserResponseDto signup(String email, String password, User.Role role, String username) {
 
         if (userRepository.existsByEmail(email)) {
@@ -32,4 +31,5 @@ public class UserServiceImpl implements UserService {
 
         return new UserResponseDto(signUser.getEmail(), signUser.getRole(), signUser.getUsername());
     }
+
 }

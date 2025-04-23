@@ -22,13 +22,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody UserRequestDto dto)
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody UserRequestDto dto)
     {
         UserResponseDto userResponseDto = userService.signup(dto.getEmail(), dto.getPassword(), dto.getRole(), dto.getUsername());
         return ResponseEntity.status(
                 SuccessCode.SIGNUP_SUCCESS.getHttpStatus()).body(
                 ApiResponseDto.success(SuccessCode.SIGNUP_SUCCESS, userResponseDto));
     }
+
+
 
 
 }
