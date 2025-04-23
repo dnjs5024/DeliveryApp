@@ -3,6 +3,7 @@ package com.example.delivery.domain.review.entity;
 import com.example.delivery.common.entity.BaseTimeEntity;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,7 +12,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,23 +41,22 @@ public class Review extends BaseTimeEntity {
     @Column
     private String content; // 리뷰내용
 
-    @Column
-    private String imgUrl; // aws3에서 사진 가져올 url
-
-    @Column
+    @Column(nullable = false)
     private Integer rating; // 별점
 
-    private Review(Store store, User user, String content, String imgUrl, Integer rating) {
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewImage> reviewImage;
+
+    private Review(Store store, User user, String content, Integer rating) {
         this.store = store;
         this.user = user;
         this.content = content;
-        this.imgUrl = imgUrl;
         this.rating = rating;
     }
 
     @Builder
-    public static Review of(Store store, User user, String content, String imgUrl, Integer rating){
-      return new Review(store, user, content, imgUrl, rating);
+    public static Review of(Store store, User user, String content, Integer rating){
+      return new Review(store, user, content, rating);
     }
 
 }
