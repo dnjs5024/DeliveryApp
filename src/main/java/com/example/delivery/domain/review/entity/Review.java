@@ -1,4 +1,4 @@
-package com.example.delivery.review.entity;
+package com.example.delivery.domain.review.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.Column;

@@ -1,11 +1,11 @@
-package com.example.delivery.user.service;
+package com.example.delivery.domain.user.service;
 
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.enums.ErrorCode;
-import com.example.delivery.config.PasswordEncoder;
-import com.example.delivery.user.dto.UserResponseDto;
-import com.example.delivery.user.entity.User;
-import com.example.delivery.user.repository.UserRepository;
+import com.example.delivery.common.config.PasswordEncoder;
+import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.entity.User;
+import com.example.delivery.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
