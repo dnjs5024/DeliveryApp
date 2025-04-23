@@ -52,7 +52,6 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * 성공 응답을 생성하는 메소드 (데이터 X)
      * 예를 들면 로그아웃에 성공했습니다 -> 따로 줄 데이터가 없음
      * @param successCode 성공 상태코드/메시지 Enum
-     * @param path 요청 경로
      * @return ApiResponseDto
      */
     public static <T> ApiResponseDto<T> success(final SuccessCode successCode) {
