@@ -24,10 +24,10 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
  */
 @Builder
 public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방식으로 생성자/getter/equals 를 자동으로 만들어줌, 불변객체임
-                                 LocalDateTime timestamp,                       // 요청 시각
+                                 @JsonInclude(NON_NULL) LocalDateTime timestamp,                       // 요청 시각
                                  int statusCode,                                // HTTP 상태 코드 숫자 (예: 400)
                                  @NonNull String message,                       // 응답 메시지 (ex: "가게 생성 성공", "잘못된 요청입니다")
-                                 @JsonInclude(value = NON_NULL) String path,    // 요청 경로 (ex : api/stores),  null이면 JSON에서 제외됨
+                                 @JsonInclude(value = NON_NULL)String path,                                   // 요청 경로 (ex : api/stores)
                                  @JsonInclude(value = NON_NULL) T data          // 실제 응답 데이터 (nullable), null이면 JSON에서 제외됨
 ) {
     /**
@@ -37,19 +37,22 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * @param data 응답 데이터
      * @return ApiResponseDto
      */
-    public static <T> ApiResponseDto<T> success(final SuccessCode successCode, @Nullable final T data) {
-        return ApiResponseDto.<T>builder()
-                .timestamp(LocalDateTime.now())
-                .statusCode(successCode.getHttpStatus().value())
-                .message(successCode.getMessage())
-                .path(null)
-                .data(data)
-                .build();
+    public static <T> ApiResponseDto<T> success(final SuccessCode successCode,
+                                                @Nullable final T data
+                                                ) {
+        return new ApiResponseDto<>(
+                null,
+                successCode.getHttpStatus().value(),
+                successCode.getMessage(),
+                null,
+                data
+        );
     }
     /**
      * 성공 응답을 생성하는 메소드 (데이터 X)
      * 예를 들면 로그아웃에 성공했습니다 -> 따로 줄 데이터가 없음
      * @param successCode 성공 상태코드/메시지 Enum
+     * @param path 요청 경로
      * @return ApiResponseDto
      */
     public static <T> ApiResponseDto<T> success(final SuccessCode successCode) {
@@ -63,13 +66,13 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * @return ApiResponseDto
      */
     public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode, final String path) {
-        return ApiResponseDto.<T>builder()
-                .timestamp(LocalDateTime.now())
-                .statusCode(errorCode.getHttpStatus().value())
-                .message(errorCode.getMessage())
-                .path(path)
-                .data(null)
-                .build();
+        return new ApiResponseDto<>(
+                LocalDateTime.now(),
+                errorCode.getHttpStatus().value(),
+                errorCode.getMessage(),
+                path,
+                null
+        );
     }
 
     /**
@@ -80,12 +83,12 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * @return ApiResponseDto
      */
     public static <T> ApiResponseDto<T> fail(final String message, final String path) {
-        return ApiResponseDto.<T>builder()
-                .timestamp(LocalDateTime.now())
-                .statusCode(HttpStatus.BAD_REQUEST.value())
-                .message(message)
-                .path(path)
-                .data(null)
-                .build();
+        return new ApiResponseDto<>(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                message,
+                path,
+                null
+        );
     }
 }
