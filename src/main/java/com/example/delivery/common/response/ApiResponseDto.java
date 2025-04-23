@@ -27,7 +27,7 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
                                  LocalDateTime timestamp,                       // 요청 시각
                                  int statusCode,                                // HTTP 상태 코드 숫자 (예: 400)
                                  @NonNull String message,                       // 응답 메시지 (ex: "가게 생성 성공", "잘못된 요청입니다")
-                                 String path,                                   // 요청 경로 (ex : api/stores)
+                                 @JsonInclude(value = NON_NULL) String path,    // 요청 경로 (ex : api/stores),  null이면 JSON에서 제외됨
                                  @JsonInclude(value = NON_NULL) T data          // 실제 응답 데이터 (nullable), null이면 JSON에서 제외됨
 ) {
     /**
@@ -35,15 +35,14 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * 예를 들면 가게 생성을 성공했을 때, 데이터도 함께 내려주고 싶을 때 사용함
      * @param successCode 성공 상태코드/메시지 Enum
      * @param data 응답 데이터
-     * @param path 요청 경로
      * @return ApiResponseDto
      */
-    public static <T> ApiResponseDto<T> success(final SuccessCode successCode, @Nullable final T data, final String path) {
+    public static <T> ApiResponseDto<T> success(final SuccessCode successCode, @Nullable final T data) {
         return ApiResponseDto.<T>builder()
                 .timestamp(LocalDateTime.now())
                 .statusCode(successCode.getHttpStatus().value())
                 .message(successCode.getMessage())
-                .path(path)
+                .path(null)
                 .data(data)
                 .build();
     }
@@ -51,11 +50,10 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * 성공 응답을 생성하는 메소드 (데이터 X)
      * 예를 들면 로그아웃에 성공했습니다 -> 따로 줄 데이터가 없음
      * @param successCode 성공 상태코드/메시지 Enum
-     * @param path 요청 경로
      * @return ApiResponseDto
      */
-    public static <T> ApiResponseDto<T> success(final SuccessCode successCode, final String path) {
-        return success(successCode, null, path);
+    public static <T> ApiResponseDto<T> success(final SuccessCode successCode) {
+        return success(successCode, null);
     }
     /**
      * 실패 응답을 생성하는 메소드 (ErrorCode 기반)
