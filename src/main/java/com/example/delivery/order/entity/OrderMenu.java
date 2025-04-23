@@ -1,12 +1,14 @@
 package com.example.delivery.order.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.apache.catalina.Store;
 
 @Entity
 @Table(name ="order_menu")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderMenu {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +24,9 @@ public class OrderMenu {
 //    @JoinColumn(name ="menu_id")
 //    private Menu menu;
 
-    public OrderMenu(){;}
-
-    public OrderMenu(int quantity, Order order) {
-        this.quantity = quantity;
-        this.order = order;
-    }
+//    public OrderMenu(int quantity, Order order,Menu menu) {
+//        this.quantity = quantity;
+//        this.order = order;
+//        this.menu = menu;
+//    }
 }
