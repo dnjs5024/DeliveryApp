@@ -1,14 +1,15 @@
 package com.example.delivery.review.service;
 
+import com.example.delivery.common.service.ImageUploadService;
 import com.example.delivery.review.dto.ReviewFindResponseDto;
 import com.example.delivery.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.review.dto.ReviewSaveResponseDto;
-import com.example.delivery.review.entity.Review;
 import com.example.delivery.review.repository.ReviewRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -16,13 +17,15 @@ public class ReviewServiceImpl implements ReviewService{
 
     private final ReviewRepository reviewRepository;
 
+    private final ImageUploadService imageUploadService;
+
 //    private final StoreRepository storeRepository;
 
 //      private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto) {
+    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, MultipartFile file) {
 
 //        Store store = storeRepository.findById(requestDto.getStoreId());
 //        User user = userRepository.findById(requestDto.getUserId());

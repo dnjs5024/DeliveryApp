@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -24,8 +25,8 @@ public class ReviewController {
     private final  ReviewService reviewService;
 
     @PostMapping
-    public ResponseEntity<ApiResponseDto<?>> saveReview(ReviewSaveRequestDto requestDto){
-        reviewService.save(requestDto);
+    public ResponseEntity<ApiResponseDto<?>> saveReview(ReviewSaveRequestDto requestDto, MultipartFile file){
+        reviewService.save(requestDto,file);
         return ResponseEntity.status(SuccessCode.REVIEW_CREATED.getHttpStatus()).body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED));
     }
 

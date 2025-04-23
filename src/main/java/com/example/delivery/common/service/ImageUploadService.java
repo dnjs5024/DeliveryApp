@@ -15,7 +15,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class ImageUploadService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;

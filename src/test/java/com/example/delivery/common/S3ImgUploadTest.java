@@ -1,13 +1,10 @@
 package com.example.delivery.common;
 
 
-import com.example.delivery.common.service.S3Service;
+import com.example.delivery.common.service.ImageUploadService;
 import java.io.FileInputStream;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 public class S3ImgUploadTest {
 
     @Autowired
-    private S3Service s3Service;
+    private ImageUploadService s3Service;
 
     @Test
     void 파일_업로드_테스트() throws IOException {
