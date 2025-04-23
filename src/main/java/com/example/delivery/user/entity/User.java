@@ -1,15 +1,13 @@
 package com.example.delivery.user.entity;
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +22,11 @@ public class User extends BaseTimeEntity{
     @Column(nullable = false)
     private String password;
 
-    @Setter
-    private LocalDateTime withdrawTime;
-
-    @Setter
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    public User() {
-    }
+    private LocalDateTime withdrawTime;
 
     public enum Role {
         USER,
@@ -46,4 +39,14 @@ public class User extends BaseTimeEntity{
         this.role = role;
         this.password = password;
     }
+
+    public void withdraw() {
+        this.withdrawTime = LocalDateTime.now();
+    }
+
+    public void changeRole(Role newRole) {
+        this.role = newRole;
+    }
+
+
 }
