@@ -2,7 +2,6 @@ package com.example.delivery.domain.store.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,7 @@ import java.time.LocalTime;
 @Getter
 @Table(name = "store")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Store {
+public class Store{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
