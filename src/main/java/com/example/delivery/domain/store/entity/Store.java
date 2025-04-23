@@ -49,8 +49,6 @@ public class Store {
 //        this.minOrderPrice = minOrderPrice;
 //        this.status = StoreStatus.OPEN;
 //        this.owner = owner;
-//        this.createdAt = LocalDateTime.now();
-//        this.updatedAt = LocalDateTime.now();
 //    }
 
     public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
