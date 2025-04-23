@@ -1,6 +1,6 @@
-package com.example.delivery.user.dto;
+package com.example.delivery.domain.user.dto;
 
-import com.example.delivery.user.entity.User;
+import com.example.delivery.domain.user.entity.User;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
-package com.example.delivery.user.service;
+package com.example.delivery.domain.user.service;
 
-import com.example.delivery.user.dto.UserResponseDto;
-import com.example.delivery.user.entity.User;
+import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.entity.User;
 import org.springframework.stereotype.Service;
 
 @Service
