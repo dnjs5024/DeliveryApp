@@ -41,9 +41,8 @@ public class ImageUploadService {
                 .key(fileName)  // 버킷 내 저장할 경로 (위에서 만든 고유 파일명)
                 .contentType(file.getContentType()) // 타입 image/png
                 .build();
-
             try {
-                PutObjectResponse response = s3Client.putObject(putObjectRequest,
+                s3Client.putObject(putObjectRequest,
                     RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             } catch (IOException e) {
                 throw new BadRequestException(ErrorCode.INTERNAL_SERVER_ERROR);
