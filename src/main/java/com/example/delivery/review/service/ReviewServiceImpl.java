@@ -13,6 +13,7 @@ import com.example.delivery.review.dto.ReviewFindResponseDto;
 import com.example.delivery.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.review.dto.ReviewUpdateRequestDto;
+import com.example.delivery.review.repository.ReviewImageRepository;
 import com.example.delivery.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
 
+    private final ReviewImageRepository imageRepository;
+
     private final UserRepository userRepository;
 
     private final StoreRepository storeRepository;
 
     private final ImageUploadService imageUploadService;
-
-//    private final StoreRepository storeRepository;
 
 
     @Transactional
@@ -43,7 +44,9 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (files != null && !files.isEmpty()) {
             List<String> urlList = imageUploadService.uploadFile(files);
-            urlList.forEach(System.out::println);
+            for(String url : urlList){
+                imageRepository.save();
+            }
         }
 
         Store store = storeRepository.findById(requestDto.getStoreId())
