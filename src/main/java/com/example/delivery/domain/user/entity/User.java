@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity{
     @Id

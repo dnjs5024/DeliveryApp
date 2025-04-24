@@ -1,5 +1,6 @@
 package com.example.delivery.domain.store.entity;
 
+import com.example.delivery.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import java.time.LocalTime;
 @Getter
 @Table(name = "store")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Store {
+public class Store{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,21 +36,21 @@ public class Store {
     @Column(nullable = false)
     private StoreStatus status; // OPEN, CLOSED
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name="user_id), nullable = false)
-    //private User owner; // 사장님(User)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id", nullable = false)
+    private User owner; // 사장님(User)
 
-    // 생성자, 비즈니스 메서드 등 추가 예정
-    // 생성 메서드
-//    @Builder
-//    public Store(String name, LocalTime openTime, LocalTime closeTime, Integer minOrderPrice, User owner) {
-//        this.name = name;
-//        this.openTime = openTime;
-//        this.closeTime = closeTime;
-//        this.minOrderPrice = minOrderPrice;
-//        this.status = StoreStatus.OPEN;
-//        this.owner = owner;
-//    }
+     //생성자, 비즈니스 메서드 등 추가 예정
+     //생성 메서드
+    @Builder
+    public Store(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice, StoreStatus status, User owner) {
+        this.name = name;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.minOrderPrice = minOrderPrice;
+        this.status = StoreStatus.OPEN;
+        this.owner = owner;
+    }
 
     public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
         this.name = name;
