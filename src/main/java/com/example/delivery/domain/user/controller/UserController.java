@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<Void>> login(
-            @Valid @RequestBody SessionUserDto dto,
+            @Valid @RequestBody LoginRequestDto dto,
             HttpServletRequest request
     ) {
         // 세션 가져오기
@@ -60,7 +60,14 @@ public class UserController {
 
         // 세션 생성 및 로그인 정보 저장
         // User 엔티티는 테이블과 매핑되기 때문에 세션에 User 를 직접 저장하지 않고 SessionUserDto 를 저장한다.
-        SessionUserDto sessionUserDto = new SessionUserDto(user.getEmail(),user.getPassword());
+        SessionUserDto sessionUserDto = new SessionUserDto(user.getId(), user.getEmail(), user.getRole());
+        
+        // 이전 세션 체크후 제거
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate(); // 기존 세션 제거
+        }
+        // 새 세션 생성
         request.getSession(true).setAttribute("loginUser", sessionUserDto);
 
         return ResponseEntity.status(
@@ -83,7 +90,7 @@ public class UserController {
     @PatchMapping("/withdraw")
     public ResponseEntity<ApiResponseDto<Void>> withdraw(
             HttpServletRequest request,
-            @RequestBody SessionUserDto dto
+            @RequestBody LoginRequestDto dto
     ) {
         userService.withdraw(request, dto);
 

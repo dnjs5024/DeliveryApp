@@ -1,7 +1,4 @@
 package com.example.delivery.common.config;
-
-import com.example.delivery.common.exception.base.CustomException;
-import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.repository.UserRepository;

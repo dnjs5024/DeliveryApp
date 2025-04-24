@@ -1,5 +1,6 @@
 package com.example.delivery.domain.user.service;
 
+import com.example.delivery.domain.user.dto.LoginRequestDto;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
 import com.example.delivery.domain.user.entity.User;
@@ -11,5 +12,5 @@ public interface UserService {
     UserResponseDto signup(String email, String password, User.Role role, String username);
     User login(String email, String password);
     void logout(HttpServletRequest request);
-    void withdraw(HttpServletRequest request, SessionUserDto dto);
+    void withdraw(HttpServletRequest request, LoginRequestDto loginRequestDto);
 }

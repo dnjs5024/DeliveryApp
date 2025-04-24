@@ -4,6 +4,7 @@ import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.config.PasswordEncoder;
+import com.example.delivery.domain.user.dto.LoginRequestDto;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
 import com.example.delivery.domain.user.entity.User;
@@ -58,7 +59,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void withdraw(HttpServletRequest request, SessionUserDto dto) {
+    public void withdraw(HttpServletRequest request, LoginRequestDto loginRequestDto) {
+
+        // 요청 데이터에서 세션을 가져옴 (없으면 null 반환)
         HttpSession session = request.getSession(false);
         if (session == null) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
@@ -75,7 +78,7 @@ public class UserServiceImpl implements UserService {
         User loginUser = userRepository.findUserByEmailOrElseThrow(sessionUserDto.getEmail());
 
         // 비밀번호 확인
-        if (!passwordEncoder.matches(dto.getPassword(), loginUser.getPassword())) {
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), loginUser.getPassword())) {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         }
 
