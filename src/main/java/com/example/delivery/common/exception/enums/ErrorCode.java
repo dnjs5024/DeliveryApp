@@ -22,6 +22,7 @@ public enum ErrorCode {
     ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴한 사용자입니다."),
 
 
+    STORE_LIMIT(HttpStatus.BAD_REQUEST, "가게는 최대 3개까지만 생성가능합니다."),
     // 401 - Unauthorized (인증 실패)
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일 또는 비밀번호가 올바르지 않습니다."),

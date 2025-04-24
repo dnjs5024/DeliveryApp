@@ -12,23 +12,28 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import com.example.delivery.domain.user.dto.UserRequestDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
+import com.example.delivery.domain.user.service.UserService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody UserRequestDto dto) {
-        UserResponseDto userResponseDto = userService.signup(dto.email(), dto.password(), dto.role(), dto.username());
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody UserRequestDto dto)
+    {
+        UserResponseDto userResponseDto = userService.signup(dto.getEmail(), dto.getPassword(), dto.getRole(), dto.getUsername());
         return ResponseEntity.status(
                 SuccessCode.SIGNUP_SUCCESS.getHttpStatus()).body(
                 ApiResponseDto.success(SuccessCode.SIGNUP_SUCCESS, userResponseDto));
@@ -56,10 +61,19 @@ public class UserController {
         }
 
         // 로그인 처리
-        User user = userService.login(dto.email(), dto.password());
+        User user = userService.login(dto.getEmail(),dto.getPassword());
 
         // 세션 생성 및 로그인 정보 저장
-        request.getSession(true).setAttribute("loginUser", user);
+        // User 엔티티는 테이블과 매핑되기 때문에 세션에 User 를 직접 저장하지 않고 SessionUserDto 를 저장한다.
+        SessionUserDto sessionUserDto = new SessionUserDto(user.getId(), user.getEmail(), user.getRole());
+        
+        // 이전 세션 체크후 제거
+        HttpSession oldSession = request.getSession(false);
+        if (oldSession != null) {
+            oldSession.invalidate(); // 기존 세션 제거
+        }
+        // 새 세션 생성
+        request.getSession(true).setAttribute("loginUser", sessionUserDto);
 
         return ResponseEntity.status(
                 SuccessCode.LOGIN_SUCCESS.getHttpStatus()).body(
@@ -82,8 +96,7 @@ public class UserController {
     public ResponseEntity<ApiResponseDto<Void>> withdraw(
             HttpServletRequest request,
             @RequestBody LoginRequestDto dto
-    )
-    {
+    ) {
         userService.withdraw(request, dto);
 
         return ResponseEntity.status(
