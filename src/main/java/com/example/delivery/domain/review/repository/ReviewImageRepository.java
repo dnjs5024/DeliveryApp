@@ -1,4 +1,4 @@
-package com.example.delivery.review.repository;
+package com.example.delivery.domain.review.repository;
 
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;

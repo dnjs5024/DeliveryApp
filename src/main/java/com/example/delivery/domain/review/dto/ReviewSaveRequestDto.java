@@ -1,4 +1,4 @@
-package com.example.delivery.review.dto;
+package com.example.delivery.domain.review.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

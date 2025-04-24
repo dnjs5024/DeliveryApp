@@ -1,20 +1,22 @@
-package com.example.delivery.review.service;
+package com.example.delivery.domain.review.service;
 
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.service.ImageUploadService;
+import com.example.delivery.domain.review.entity.Image;
+import com.example.delivery.domain.review.entity.ImageType;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.repository.UserRepository;
-import com.example.delivery.review.dto.ReviewFindResponseDto;
-import com.example.delivery.review.dto.ReviewSaveRequestDto;
-import com.example.delivery.review.dto.ReviewSaveResponseDto;
-import com.example.delivery.review.dto.ReviewUpdateRequestDto;
-import com.example.delivery.review.repository.ReviewImageRepository;
-import com.example.delivery.review.repository.ReviewRepository;
+import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
+import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
+import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
+import com.example.delivery.domain.review.dto.ReviewUpdateRequestDto;
+import com.example.delivery.domain.review.repository.ReviewImageRepository;
+import com.example.delivery.domain.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +39,20 @@ public class ReviewServiceImpl implements ReviewService {
     private final ImageUploadService imageUploadService;
 
 
+    /**
+     *
+     * @param requestDto 별점,리뷰 내용 ,가게 식별자
+     * @param userId 작성한 유저 식별자
+     * @param files 이미지
+     * @return
+     */
     @Transactional
     @Override
-    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, Long userId,
-        List<MultipartFile> files) {
-
-        if (files != null && !files.isEmpty()) {
-            List<String> urlList = imageUploadService.uploadFile(files);
-            for(String url : urlList){
-                imageRepository.save();
-            }
-        }
+    public ReviewSaveResponseDto save(
+        ReviewSaveRequestDto requestDto,
+        Long userId,
+        List<MultipartFile> files
+    ) {
 
         Store store = storeRepository.findById(requestDto.getStoreId())
             .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
@@ -55,9 +60,17 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        Review review = Review.of(store, user, requestDto.getContent(), requestDto.getRating());
+        Review review = reviewRepository.save( // 리뷰 저장
+            Review.of(store, user, requestDto.getContent(), requestDto.getRating()));
 
-        return ReviewSaveResponseDto.toDto(reviewRepository.save(review));
+        if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
+            List<String> urlList = imageUploadService.uploadFile(files);
+            for (String url : urlList) {
+                imageRepository.save(Image.of(review.getId(), url, ImageType.REVIEW)); // 이미지 저장
+            }
+        }
+
+        return ReviewSaveResponseDto.toDto(review);
     }
 
 

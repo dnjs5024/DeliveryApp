@@ -1,13 +1,11 @@
-package com.example.delivery.review.dto;
+package com.example.delivery.domain.review.dto;
 
 
 import com.example.delivery.domain.review.entity.Review;
 import java.time.LocalDateTime;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 @Getter
 @RequiredArgsConstructor

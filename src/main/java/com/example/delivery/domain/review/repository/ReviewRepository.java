@@ -1,10 +1,9 @@
-package com.example.delivery.review.repository;
+package com.example.delivery.domain.review.repository;
 
 
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.review.entity.Review;
-import com.example.delivery.review.dto.ReviewFindResponseDto;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
