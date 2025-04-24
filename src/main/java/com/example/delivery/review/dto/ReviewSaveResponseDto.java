@@ -33,7 +33,7 @@ public class ReviewSaveResponseDto {
         return new ReviewSaveResponseDto(
             review.getId(),
             review.getStore().getId(),
-            review.getUser().getUserId(),
+            review.getUser().getId(),
             review.getContent(),
             review.getRating(),
             null,

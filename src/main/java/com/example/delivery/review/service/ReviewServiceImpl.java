@@ -55,10 +55,15 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public List<ReviewFindResponseDto> findByStoreId(Long storeId) {
 
-//        StoreRepository.findAllByStoreId(storeId);
-//        reviewRepository.findAllByStoreId(storeId);
+       StoreRepository.findAllByStoreId(storeId);
+        reviewRepository.findAllByStoreId(storeId);
 
         return null;
+    }
+
+    @Override
+    public List<ReviewFindResponseDto> find(Long storeId, Long userId, Long rating) {
+        return List.of();
     }
 
     /**
