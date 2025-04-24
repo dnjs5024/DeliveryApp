@@ -6,8 +6,7 @@ import com.example.delivery.review.dto.ReviewFindResponseDto;
 import com.example.delivery.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.review.service.ReviewService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +30,18 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)   // Spring이 어떤 Content-Type을 지원해야 하는지 명시.
+    /**
+     * 리뷰 저장 컨트롤러
+     * @param requestDto "storeId","userId","content","rating" content 만 null 가능
+     * @param files null 이여도 허용
+     * @return 커스텀 응답 성공 201
+     */
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ReviewSaveResponseDto>> saveReview(
-        @RequestPart("request") String request,
-        @RequestPart(value = "file", required = false) List<MultipartFile> file
-    ) throws JsonProcessingException {
-
-        ReviewSaveRequestDto requestDto = new ObjectMapper().readValue(request, ReviewSaveRequestDto.class);
-
-        reviewService.save(requestDto, file);
+        @RequestPart("request") @Valid ReviewSaveRequestDto requestDto,
+        @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) {
+        reviewService.save(requestDto, files);
 
         return ResponseEntity
             .status(SuccessCode.REVIEW_CREATED.getHttpStatus())
@@ -47,15 +49,15 @@ public class ReviewController {
     }
 
     @GetMapping("/store/{storeId}")
-    public ResponseEntity<ApiResponseDto<ReviewFindResponseDto>> findByStoreId(
-        @PathVariable Long storeId) {
-        List<ReviewFindResponseDto> requestDto = reviewService.findByStoreId(storeId);
+    public ResponseEntity<ApiResponseDto<List<ReviewFindResponseDto>>> findByStoreId(
+        @PathVariable @Min(1) Long storeId) {
+        List<ReviewFindResponseDto> responseDto = reviewService.findByStoreId(storeId);
         return ResponseEntity.status(SuccessCode.OK.getHttpStatus())
-            .body(ApiResponseDto.success(SuccessCode.OK));
+            .body(ApiResponseDto.success(SuccessCode.OK,responseDto));
     }
 
     @DeleteMapping("/{reviewId}")
-    public ResponseEntity<ApiResponseDto<?>> deleteReviewById(@PathVariable @Min(1) Long reviewId) {
+    public ResponseEntity<ApiResponseDto<?>> deleteReviewById(@PathVariable("reviewId") @Min(1) Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.status(SuccessCode.REVIEW_DELETED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_DELETED));
