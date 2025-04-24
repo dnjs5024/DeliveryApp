@@ -4,16 +4,14 @@ import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
-import com.example.delivery.domain.user.dto.LoginRequestDto;
-import com.example.delivery.domain.user.dto.UserRequestDto;
-import com.example.delivery.domain.user.dto.UserResponseDto;
+
+import com.example.delivery.domain.user.dto.*;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import com.example.delivery.domain.user.dto.UserRequestDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
-import com.example.delivery.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +28,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody UserRequestDto dto) {
-        UserResponseDto userResponseDto = userService.signup(dto.getEmail(), dto.getPassword(), dto.getRole(), dto.getUsername());
+        UserResponseDto userResponseDto = userService.signup(dto.email(), dto.password(), dto.role(), dto.username());
         return ResponseEntity.status(
                 SuccessCode.SIGNUP_SUCCESS.getHttpStatus()).body(
                 ApiResponseDto.success(SuccessCode.SIGNUP_SUCCESS, userResponseDto));
@@ -58,7 +56,7 @@ public class UserController {
         }
 
         // 로그인 처리
-        User user = userService.login(dto.getEmail(), dto.getPassword());
+        User user = userService.login(dto.email(), dto.password());
 
         // 세션 생성 및 로그인 정보 저장
         request.getSession(true).setAttribute("loginUser", user);

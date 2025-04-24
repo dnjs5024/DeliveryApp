@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void withdraw(HttpServletRequest request, LoginRequestDto dto) {
 
-        User user = userRepository.findUserByEmailOrElseThrow(dto.getEmail());
-        if (!passwordEncoder.matches(dto.getPassword(),user.getPassword())) {
+        User user = userRepository.findUserByEmailOrElseThrow(dto.email());
+        if (!passwordEncoder.matches(dto.password(),user.getPassword())) {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         };
 
