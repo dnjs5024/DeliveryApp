@@ -28,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService{
     @Override
     public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, List<MultipartFile> files) {
 
-        if(!files.isEmpty()){
+        if(files != null && !files.isEmpty()){
             List<String> urlList = imageUploadService.uploadFile(files);
             urlList.forEach(System.out::println);
         }
@@ -70,6 +70,6 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public void updateReview(String content, String imgUrl, Integer rating) {
-
+        //test
     }
 }
