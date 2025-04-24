@@ -17,7 +17,6 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,7 +38,6 @@ public class Review extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column
     private String content; // 리뷰내용
 
     @Column(nullable = false)
@@ -55,9 +53,13 @@ public class Review extends BaseTimeEntity {
         this.rating = rating;
     }
 
-    @Builder
     public static Review of(Store store, User user, String content, Integer rating){
       return new Review(store, user, content, rating);
+    }
+
+    public void update(String content, Integer rating) {
+        this.content = content;
+        this.rating = rating;
     }
 
 }

@@ -27,8 +27,6 @@ public class ReviewSaveResponseDto {
 
     private final LocalDateTime updatedAt;
 
-
-    @Builder
     public static ReviewSaveResponseDto toDto(Review review){
         return new ReviewSaveResponseDto(
             review.getId(),
