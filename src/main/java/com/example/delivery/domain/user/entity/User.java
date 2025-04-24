@@ -50,5 +50,4 @@ public class User extends BaseTimeEntity{
         this.role = newRole;
     }
 
-
 }

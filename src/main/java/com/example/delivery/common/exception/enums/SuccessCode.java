@@ -31,7 +31,10 @@ public enum SuccessCode {
     ORDER_STATUS_UPDATED(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다."),
 
     // 리뷰 관련
-    REVIEW_CREATED(HttpStatus.CREATED, "리뷰가 성공적으로 등록되었습니다.");
+    REVIEW_CREATED(HttpStatus.CREATED, "리뷰가 성공적으로 등록되었습니다."),
+    REVIEW_UPDATED(HttpStatus.OK, "리뷰가 성공적으로 수정되었습니다."),
+    REVIEW_DELETED(HttpStatus.OK, "리뷰가 성공적으로 삭제되었습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String message;
