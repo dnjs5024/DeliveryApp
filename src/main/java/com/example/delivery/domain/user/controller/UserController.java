@@ -13,14 +13,14 @@ import jakarta.servlet.http.HttpSession;
 import com.example.delivery.domain.user.dto.UserRequestDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class UserController {
 
@@ -36,7 +36,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<Void>> login(
-            @Valid @RequestBody LoginRequestDto dto,
+            @Valid @RequestBody SessionUserDto dto,
             HttpServletRequest request
     ) {
         // 세션 가져오기
@@ -56,10 +56,12 @@ public class UserController {
         }
 
         // 로그인 처리
-        User user = userService.login(dto.email(), dto.password());
+        User user = userService.login(dto.getEmail(),dto.getPassword());
 
         // 세션 생성 및 로그인 정보 저장
-        request.getSession(true).setAttribute("loginUser", user);
+        // User 엔티티는 테이블과 매핑되기 때문에 세션에 User 를 직접 저장하지 않고 SessionUserDto 를 저장한다.
+        SessionUserDto sessionUserDto = new SessionUserDto(user.getEmail(),user.getPassword());
+        request.getSession(true).setAttribute("loginUser", sessionUserDto);
 
         return ResponseEntity.status(
                 SuccessCode.LOGIN_SUCCESS.getHttpStatus()).body(
@@ -81,9 +83,8 @@ public class UserController {
     @PatchMapping("/withdraw")
     public ResponseEntity<ApiResponseDto<Void>> withdraw(
             HttpServletRequest request,
-            @RequestBody LoginRequestDto dto
-    )
-    {
+            @RequestBody SessionUserDto dto
+    ) {
         userService.withdraw(request, dto);
 
         return ResponseEntity.status(

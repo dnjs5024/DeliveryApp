@@ -4,11 +4,12 @@ import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.config.PasswordEncoder;
-import com.example.delivery.domain.user.dto.LoginRequestDto;
+import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.dto.UserResponseDto;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,17 +58,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void withdraw(HttpServletRequest request, LoginRequestDto dto) {
+    public void withdraw(HttpServletRequest request, SessionUserDto dto) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
 
-        User user = userRepository.findUserByEmailOrElseThrow(dto.email());
-        if (!passwordEncoder.matches(dto.password(),user.getPassword())) {
+        // 세션에서 SessionUserDto 가져오기
+        SessionUserDto sessionUserDto = (SessionUserDto) session.getAttribute("loginUser");
+
+        if (sessionUserDto == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        // 세션에서 User 객체 가져오기
+        User loginUser = userRepository.findUserByEmailOrElseThrow(sessionUserDto.getEmail());
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(dto.getPassword(), loginUser.getPassword())) {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
-        };
+        }
 
-        if (user.getWithdrawTime() != null) {
+        // 이미 탈퇴한 사용자일 경우 처리
+        if (loginUser.getWithdrawTime() != null) {
             throw new CustomException(ErrorCode.ALREADY_WITHDRAWN);
         }
-        user.withdraw();
+
+        // 탈퇴 처리
+        loginUser.withdraw();
         request.getSession().invalidate();
     }
 
