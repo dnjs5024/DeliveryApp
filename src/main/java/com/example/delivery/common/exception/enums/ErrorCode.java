@@ -17,8 +17,10 @@ public enum ErrorCode {
     ORDER_STATUS_CHANGE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "주문 상태를 순차적으로 변경해야 합니다."),
     SELF_REQUEST_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "자기 자신에게 요청할 수 없습니다."),
     INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST, "이메일 형식이 올바르지 않습니다."),
+    ALREADY_LOGGED_IN(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다."),
     ALREADY_LOGGED_OUT(HttpStatus.BAD_REQUEST, "이미 로그아웃된 사용자입니다."),
     ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴한 사용자입니다."),
+
 
     // 401 - Unauthorized (인증 실패)
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다."),
@@ -51,6 +53,9 @@ public enum ErrorCode {
     // 500 - Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
     TEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "테스트 에러입니다.");
+
+
+
 
     private final HttpStatus httpStatus;
     private final String message;
