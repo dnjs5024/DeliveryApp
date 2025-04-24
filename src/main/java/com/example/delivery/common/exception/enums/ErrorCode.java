@@ -45,6 +45,7 @@ public enum ErrorCode {
     // 405 - 지원하지 않는 메서드
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 메소드입니다."),
 
+
     // 409 - Conflict (충돌)
     STORE_LIMIT_EXCEEDED(HttpStatus.CONFLICT, "가게는 최대 3개까지만 등록할 수 있습니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
