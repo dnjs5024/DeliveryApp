@@ -1,4 +1,4 @@
-package com.example.delivery.order.controller;
+package com.example.delivery.domain.order.controller;
 
 
 import lombok.RequiredArgsConstructor;

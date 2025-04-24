@@ -1,6 +1,6 @@
-package com.example.delivery.order.repository;
+package com.example.delivery.domain.order.repository;
 
-import com.example.delivery.order.entity.OrderMenu;
+import com.example.delivery.domain.order.entity.OrderMenu;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

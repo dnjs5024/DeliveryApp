@@ -1,4 +1,4 @@
-package com.example.delivery.order.entity;
+package com.example.delivery.domain.order.entity;
 
 import lombok.Getter;
 

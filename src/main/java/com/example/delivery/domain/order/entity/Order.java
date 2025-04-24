@@ -1,9 +1,8 @@
-package com.example.delivery.order.entity;
+package com.example.delivery.domain.order.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
