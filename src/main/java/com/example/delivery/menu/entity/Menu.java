@@ -1,7 +1,6 @@
 package com.example.delivery.menu.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
-import com.example.delivery.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -13,14 +12,14 @@ import org.hibernate.annotations.Where;
 @Entity
 @Table(name = "menus")
 @Getter
-@SQLDelete(sql = "update menus SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "update menus SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -32,13 +31,13 @@ public class Menu extends BaseTimeEntity {
     private String description;
 
     @Column(nullable = false)
-    private boolean isDeleted = false;
+    private boolean deleted = false;
 
     private Menu(String name, int price, String description) {
         this.name = name;
         this.price = price;
         this.description = description;
-        this.isDeleted = false;
+        this.deleted = false;
     }
 
     @Builder
@@ -53,6 +52,6 @@ public class Menu extends BaseTimeEntity {
     }
 
     public void delete() {
-        this.isDeleted = true;
+        this.deleted = true;
     }
 }
