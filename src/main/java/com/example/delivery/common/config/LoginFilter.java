@@ -1,6 +1,7 @@
 package com.example.delivery.common.config;
-
+import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.entity.User;
+import com.example.delivery.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,11 @@ import java.util.Map;
 public class LoginFilter implements Filter {
 
     private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login"};
+    private final UserRepository userRepository;
+
+    public LoginFilter(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
@@ -55,11 +61,18 @@ public class LoginFilter implements Filter {
 
         // session == null 일 경우 NullPointerException 발생하므로 조건문 처리
         if (session != null) {
-            loginUser = (User) session.getAttribute("loginUser");
+            // 세션에서 SessionUserDto 객체 가져오기
+            SessionUserDto sessionUserDto = (SessionUserDto) session.getAttribute("loginUser");
+
+            // sessionUserDto가 존재하는 경우 User 객체로 변환하거나 필요한 작업 수행
+            if (sessionUserDto != null) {
+                // 이메일을 사용하여 User 엔티티를 조회
+                loginUser = userRepository.findUserByEmailOrElseThrow(sessionUserDto.getEmail());
+            }
         }
-        // 현재 로그인한 유저가 존재하지 않을 경우 로직 실행
+
+        // 현재 로그인한 유저가 존재하지 않거나, URI가 "/api/store"로 시작하고, 권한이 OWNER가 아닐 경우
         if (loginUser != null) {
-            // 해당 URI("/api/store")에서만 OWNER 권한을 요구하는 로직
             if (requestURI.startsWith("/api/store") && !loginUser.getRole().equals(User.Role.OWNER)) {
                 HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
                 httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 403 Forbidden
