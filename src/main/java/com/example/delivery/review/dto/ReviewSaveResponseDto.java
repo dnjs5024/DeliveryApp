@@ -4,37 +4,36 @@ package com.example.delivery.review.dto;
 import com.example.delivery.domain.review.entity.Review;
 import java.time.LocalDateTime;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 @Getter
+@RequiredArgsConstructor
 public class ReviewSaveResponseDto {
 
-    private Long reviewId;
+    private final Long reviewId;
 
-    private Long storeId;
+    private final Long storeId;
 
-    private Long userId;
+    private final Long userId;
 
-    private String content;
+    private final String content;
 
-    private Integer rating;
+    private final Integer rating;
 
-    private String imgUrl;
+    private final String imgUrl;
 
-    private LocalDateTime updatedAt;
+    private final LocalDateTime updatedAt;
 
-    public ReviewSaveResponseDto(Long id, String content, Integer rating, String imgUrl,LocalDateTime updatedAt) {
-        this.reviewId = id;
-        this.content = content;
-        this.rating = rating;
-        this.imgUrl = imgUrl;
-        this.updatedAt = updatedAt;
 
-    }
-
+    @Builder
     public static ReviewSaveResponseDto toDto(Review review){
         return new ReviewSaveResponseDto(
             review.getId(),
+            review.getStore().getId(),
+            review.getUser().getUserId(),
             review.getContent(),
             review.getRating(),
             null,

@@ -1,12 +1,14 @@
 package com.example.delivery.review.service;
 
 import com.example.delivery.common.service.ImageUploadService;
+import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.user.repository.UserRepository;
 import com.example.delivery.review.dto.ReviewFindResponseDto;
 import com.example.delivery.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.review.repository.ReviewRepository;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
 
     private final ImageUploadService imageUploadService;
+
 
 //    private final StoreRepository storeRepository;
 
@@ -34,7 +37,7 @@ public class ReviewServiceImpl implements ReviewService{
         }
 
 
-//        Store store = storeRepository.findById(requestDto.getStoreId());
+//        Store store = storeRepository.findByIdEkse(requestDto.getStoreId());
 //        User user = userRepository.findById(requestDto.getUserId());
 //
 //        Review review = new Review(

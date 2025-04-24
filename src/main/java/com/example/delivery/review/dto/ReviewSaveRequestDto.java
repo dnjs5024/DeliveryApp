@@ -6,27 +6,29 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
 
 @Getter
+@RequiredArgsConstructor
 public class ReviewSaveRequestDto {
 
     @Min(1)
     @NotNull
-    private Long storeId;
+    private final Long storeId;
 
     @Min(1)
     @NotNull
-    private Long userId;
+    private final Long userId;
 
     @NotBlank
     @Size(max = 50)
-    private String content;
+    private final String content;
 
     @Min(1)
     @Max(5)
     @NotNull
-    private Integer rating;
+    private final Integer rating;
 
 }
