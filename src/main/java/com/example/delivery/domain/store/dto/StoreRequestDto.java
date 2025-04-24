@@ -11,6 +11,6 @@ public record StoreRequestDto(
         @NotBlank String name,
         @NotNull LocalTime openTime,
         @NotNull LocalTime closeTime,
-        @Min(10000) int minOrderPrice
+        @NotNull Integer minOrderPrice
         ) {
 }

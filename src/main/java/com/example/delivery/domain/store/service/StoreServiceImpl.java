@@ -1,5 +1,6 @@
 package com.example.delivery.domain.store.service;
 
+import com.example.delivery.common.constants.BusinessRuleConstants;
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.delivery.common.constants.BusinessRuleConstants.MAX_STORE_LIMIT;
+
 
 /**
  * 가게 관련 서비스 구현 클래스
@@ -31,8 +34,8 @@ public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
-    //가게 최대 운영 제한 3
-    private final int MAX_STORE_LIMIT = 3;
+
+
 
     /**
      * 가게를 생성합니다.
@@ -70,6 +73,7 @@ public class StoreServiceImpl implements StoreService {
 
         return StoreResponseDto.from(savedStore);
     }
+
     /**
      * 가게 정보를 수정
      * 사장님 본인만 수정할 수 있으며, 이름/운영시간/최소 주문금액 수정이 가능합니다.
