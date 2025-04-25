@@ -1,4 +1,4 @@
-package com.example.delivery.order.controller;
+package com.example.delivery.domain.order.controller;
 
 
 import lombok.RequiredArgsConstructor;
@@ -8,12 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
-public class OrderController {
+public class OrderOwnerController {
 
-
-    // 주문하기 (유저)  -> 다른 컨트롤러, filter로 헤야함
-
-    //Owner만 들어오는 컨트롤러 ?
     //주문 목록 (owner) get -> 페이징 Slice로
     //주문 상세조회 get
     //주문 수락 patch

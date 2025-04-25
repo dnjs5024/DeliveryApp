@@ -21,6 +21,8 @@ public enum ErrorCode {
     ALREADY_LOGGED_OUT(HttpStatus.BAD_REQUEST, "이미 로그아웃된 사용자입니다."),
     ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴한 사용자입니다."),
 
+    ORDER_MINIMUM_PRICE(HttpStatus.BAD_REQUEST,"최소 주문 금액을 넘겨주세요."),
+    STORE_CLOSED(HttpStatus.BAD_REQUEST, "가게 영업시간이 아닙니다."),
 
     STORE_LIMIT(HttpStatus.BAD_REQUEST, "가게는 최대 3개까지만 생성가능합니다."),
     // 401 - Unauthorized (인증 실패)
