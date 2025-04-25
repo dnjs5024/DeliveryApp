@@ -92,6 +92,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public void update() {
 
+
     }
 
     @Override
