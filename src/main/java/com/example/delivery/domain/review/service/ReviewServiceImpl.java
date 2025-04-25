@@ -64,6 +64,32 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewSaveResponseDto.toDto(review);
     }
 
+    /**
+     * 본인 맞는지 체크하고 업데이트
+     *
+     * @param requestDto content, rating content 는 null 가능
+     * @param userId     유저 맞는지 체크 위해
+     * @param reviewId   수정 할 리뷰
+     * @param files
+     */
+    @Transactional
+    @Override
+    public void updateReview(
+        ReviewUpdateRequestDto requestDto,
+        Long userId,
+        Long reviewId,
+        List<MultipartFile> files
+    ) {
+        isSelf(userId); //권한 체크
+
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+
+        if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
+            imageUploadService.update(review.getId(), ImageType.REVIEW, files); // 사진이 있으면 저장
+        }
+
+        review.update(requestDto.getContent(), requestDto.getRating());
+    }
 
     /**
      * 여러 필터 조건으로 조회하는 메소드 1.가게 2.별점 순 필터 조건값 제외하면 나머지는 null 임
@@ -125,22 +151,6 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(Long reviewId, Long userId) {
         isSelf(userId);
         reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));
-    }
-
-
-    /**
-     * 본인 맞는지 체크하고 업데이트
-     *
-     * @param requestDto content, rating content 는 null 가능
-     * @param userId     유저 맞는지 체크 위해
-     * @param reviewId   수정 할 리뷰
-     */
-    @Transactional
-    @Override
-    public void updateReview(ReviewUpdateRequestDto requestDto, Long userId, Long reviewId) {
-        isSelf(userId);
-        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
-        review.update(requestDto.getContent(), requestDto.getRating());
     }
 
     /**

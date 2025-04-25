@@ -29,6 +29,9 @@ public class Image extends BaseTimeEntity {
     @Column(nullable = false)
     private String imgUrl;
 
+    @Column(nullable = false)
+    private String key;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ImageType type; // STORE, MENU,

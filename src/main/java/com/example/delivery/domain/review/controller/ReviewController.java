@@ -49,11 +49,11 @@ public class ReviewController {
         @SessionAttribute(name = "userId", required = false) Long userId, // 유저 아이디
         @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        ReviewSaveResponseDto responseDto = reviewService.save(requestDto,userId, files);
+        ReviewSaveResponseDto responseDto = reviewService.save(requestDto, userId, files);
 
         return ResponseEntity
             .status(SuccessCode.REVIEW_CREATED.getHttpStatus())
-            .body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED,responseDto));
+            .body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED, responseDto));
     }
 
 
@@ -90,7 +90,7 @@ public class ReviewController {
         @PathVariable("reviewId") @Min(1) Long reviewId,
         @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
     ) {
-        reviewService.deleteReview(reviewId,userId);
+        reviewService.deleteReview(reviewId, userId);
         return ResponseEntity.status(SuccessCode.REVIEW_DELETED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_DELETED));
     }
@@ -98,10 +98,11 @@ public class ReviewController {
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ApiResponseDto<?>> updateById(
         @PathVariable("reviewId") @Min(1) Long reviewId,
-        @RequestBody @Valid ReviewUpdateRequestDto requestDto,
+        @RequestPart(value = "files", required = false) List<MultipartFile> files,
+        @RequestPart("request") @Valid ReviewUpdateRequestDto requestDto,
         @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
-    ){
-        reviewService.updateReview(requestDto,userId,reviewId);
+    ) {
+        reviewService.updateReview(requestDto, userId, reviewId, files);
         return ResponseEntity.status(SuccessCode.REVIEW_UPDATED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_UPDATED));
     }
