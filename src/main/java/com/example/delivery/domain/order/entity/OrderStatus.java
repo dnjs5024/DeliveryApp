@@ -27,4 +27,15 @@ public enum OrderStatus {
         this.description = description;
     }
 
+    //순서
+    public boolean isNext(OrderStatus next){
+        return switch (this) {
+            case PENDING -> next == ACCEPT || next == REJECT;
+            case ACCEPT -> next == PREPARE;
+            case PREPARE -> next == DELIVER;
+            case DELIVER -> next == COMPLETE;
+            default -> false;
+        };
+    }
+
 }
