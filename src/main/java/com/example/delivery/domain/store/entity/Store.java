@@ -1,6 +1,7 @@
 package com.example.delivery.domain.store.entity;
 
 import com.example.delivery.domain.user.entity.User;
+import com.example.delivery.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,6 +43,15 @@ public class Store{
     @JoinColumn(name="user_id", nullable = false)
     private User owner; // 사장님(User)
 
+    // 추가
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Menu> menus = new ArrayList<>();
+
+    public void addMenu(Menu menu) {
+        this.menus.add(menu);
+        menu.setStore(this); //  양쪽 연관관계 설정
+    }
+
      //생성자, 비즈니스 메서드 등 추가 예정
      //생성 메서드
     @Builder
@@ -63,5 +75,7 @@ public class Store{
     public void changeStatus(StoreStatus newStatus) {
         this.status = newStatus;
     }
+
+
 
 }
