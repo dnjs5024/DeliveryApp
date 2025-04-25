@@ -32,6 +32,7 @@ public enum SuccessCode {
     // 주문 관련
     ORDER_CREATED(HttpStatus.CREATED, "주문이 성공적으로 완료되었습니다."),
     ORDER_STATUS_UPDATED(HttpStatus.OK, "주문 상태가 성공적으로 변경되었습니다."),
+    ORDER_PAGING_SUCCESS(HttpStatus.OK,"주문 목록이 조회되었습니다.(Slice)"),
 
     // 리뷰 관련
     REVIEW_CREATED(HttpStatus.CREATED, "리뷰가 성공적으로 등록되었습니다."),
