@@ -62,11 +62,11 @@ public class ImageService {
         return urlList;
     }
 
-    public void fileSave(List<MultipartFile> files, Long targetId) {
+    public void fileSave(List<MultipartFile> files, Long targetId,ImageType imageType) {
 
         List<String> urlList = uploadFile(files); // 클라우드 서버에 사진 업로드
         for (String url : urlList) { // urlList 없으면 동작 x
-            imageRepository.save(Image.of(targetId, url, ImageType.REVIEW));
+            imageRepository.save(Image.of(targetId, url, imageType));
         }
     }
 

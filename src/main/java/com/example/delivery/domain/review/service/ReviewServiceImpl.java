@@ -3,6 +3,7 @@ package com.example.delivery.domain.review.service;
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
+import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageService;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
@@ -58,7 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
             Review.of(store, user, requestDto.getContent(), requestDto.getRating()));
 
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
-            imageUploadService.fileSave(files, review.getId()); // 사진이 있으면 저장
+            imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW); // 사진이 있으면 저장
         }
         return ReviewSaveResponseDto.toDto(review);
     }

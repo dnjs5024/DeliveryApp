@@ -1,5 +1,6 @@
 package com.example.delivery.domain.review;
 
+import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageService;
 import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
 import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
@@ -164,7 +165,7 @@ public class ReviewTest {
             "image-content".getBytes()      // 파일 내용
         );
         List<MultipartFile> files = List.of(mockFile);
-        imageUploadService.fileSave(files, review.getId());
+        imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW);
         // then
         Review savedReview = reviewRepository.findById(review.getId())
             .orElseThrow(() -> new RuntimeException("리뷰 저장 실패"));
