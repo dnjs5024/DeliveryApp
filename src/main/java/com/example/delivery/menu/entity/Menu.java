@@ -38,6 +38,10 @@ public class Menu extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
     private Menu(Store store, String name, int price, String description) {
         this.store = store;
         this.name = name;

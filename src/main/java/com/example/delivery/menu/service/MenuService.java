@@ -7,9 +7,9 @@ import com.example.delivery.menu.dto.ResponseDto;
 import java.util.List;
 
 public interface MenuService {
-    ResponseDto create(RequestDto requestDto);
-    ResponseDto update(Long id, RequestDto requestDto);
-    void delete(Long id);
+    ResponseDto create(Long loginUserId, RequestDto requestDto);
+    ResponseDto update(Long loginUserId, Long menuId, RequestDto requestDto);
+    void delete(Long loginUserId, Long menuId);
 
     List<ResponseDto> getMenusByStore(Store store);
 }

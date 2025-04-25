@@ -29,7 +29,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     // 가게 단건 조회 ( 폐업중인 가게는 조회 못함, 가게 단건 조회 시 그 가게의 메뉴도 보임 )
     // fetch join 사용해서 수정 예정
-    @Query("select s from Store s join fetch Menu where s.id = :id and s.status =:status")
+    @Query("select s from Store s join fetch s.menus m where s.id = :id and s.status = :status")
     Optional<Store> findWithMenuByIdAndStatus(@Param("id")Long id, @Param("status") StoreStatus status);
 
     // 페이지 기반, 이름으로 검색, 폐업 제외

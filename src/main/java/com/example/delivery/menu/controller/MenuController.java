@@ -1,5 +1,8 @@
 package com.example.delivery.menu.controller;
 
+import com.example.delivery.common.exception.enums.SuccessCode;
+import com.example.delivery.common.response.ApiResponseDto;
+import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.menu.dto.RequestDto;
 import com.example.delivery.menu.dto.ResponseDto;
 import com.example.delivery.menu.service.MenuService;
@@ -17,22 +20,34 @@ public class MenuController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createMenu(@RequestBody @Valid RequestDto requestDto) {
-        ResponseDto responseDto = menuService.create(requestDto);
-        return ResponseEntity.ok(responseDto);
+    public ResponseEntity<ApiResponseDto<ResponseDto>> createMenu(
+            @SessionAttribute("loginUser") SessionUserDto sessionUserDto,
+            @RequestBody @Valid RequestDto requestDto) {
+        // 이곳에서 세션을 받아와야해요
+        ResponseDto responseDto = menuService.create(sessionUserDto.getId(), requestDto);
+        return ResponseEntity.status(
+                SuccessCode.MENU_CREATED.getHttpStatus()).body(
+                ApiResponseDto.success(SuccessCode.MENU_CREATED, responseDto)
+        );
     }
 
     @PutMapping("/{menuId}")
-    public ResponseEntity<ResponseDto> updateMenu(
+    public ResponseEntity<ApiResponseDto<ResponseDto>> updateMenu(
+            // 여기도 추가
+            @SessionAttribute("loginUser") SessionUserDto sessionUserDto,
             @PathVariable Long menuId,
             @RequestBody @Valid RequestDto requestDto) {
-        ResponseDto responseDto = menuService.update(menuId, requestDto);
-        return ResponseEntity.ok(responseDto);
+        ResponseDto responseDto = menuService.update(sessionUserDto.getId(), menuId, requestDto);
+        return ResponseEntity.status(SuccessCode.MENU_UPDATED.getHttpStatus()).body(
+                ApiResponseDto.success(SuccessCode.MENU_UPDATED, responseDto)
+        );
     }
 
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable Long menuId) {
-        menuService.delete(menuId);
+    public ResponseEntity<Void> deleteMenu(
+            @SessionAttribute SessionUserDto sessionUserDto,
+            @PathVariable Long menuId) {
+        menuService.delete(sessionUserDto.getId(), menuId);
         return ResponseEntity.noContent().build();
     }
 }

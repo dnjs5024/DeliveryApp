@@ -1,5 +1,6 @@
 package com.example.delivery.menu.dto;
 
+import com.example.delivery.menu.entity.Menu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,5 +12,10 @@ public class ResponseDto {
     private String name;
     private int price;
     private String description;
+
+    // 생성 메서드 추가
+    public static ResponseDto from(Menu menu) {
+        return new ResponseDto(menu.getId(), menu.getName(), menu.getPrice(), menu.getDescription());
+    }
 
 }
