@@ -1,34 +1,29 @@
-package com.example.delivery.review.dto;
+package com.example.delivery.domain.review.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.jackson.Jacksonized;
 
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder
+@Jacksonized
 public class ReviewSaveRequestDto {
 
     @Min(1)
     @NotNull
-    private Long storeId;
+    private final Long storeId;
 
-    @Min(1)
-    @NotNull
-    private Long userId;
-
-    @NotBlank
     @Size(max = 50)
-    private String content;
+    private final String content;
 
     @Min(1)
     @Max(5)
     @NotNull
-    private Integer rating;
+    private final Integer rating;
 
 }
