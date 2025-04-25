@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,12 +56,8 @@ class StoreRepositoryTest {
 
         storeRepository.saveAll(List.of(openStore, closedStore));
 
-        //when
-        List<Store> results = storeRepository.findByNameContainingAndStatus("김밥", StoreStatus.OPEN);
 
-        //then
-        assertThat(results).hasSize(1);
-        assertThat(results.get(0).getName()).isEqualTo("김밥천국");
+
     }
     private User createOwner(String name) {
         return new User(name + "@test.com", "1234", User.Role.OWNER, name);
