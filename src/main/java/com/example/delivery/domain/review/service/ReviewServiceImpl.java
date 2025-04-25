@@ -3,9 +3,7 @@ package com.example.delivery.domain.review.service;
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
-import com.example.delivery.common.service.ImageUploadService;
-import com.example.delivery.domain.review.entity.Image;
-import com.example.delivery.domain.review.entity.ImageType;
+import com.example.delivery.domain.image.service.ImageService;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
@@ -15,7 +13,6 @@ import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
 import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.domain.review.dto.ReviewUpdateRequestDto;
-import com.example.delivery.domain.review.repository.ReviewImageRepository;
 import com.example.delivery.domain.review.repository.ReviewRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,20 +27,17 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    private final ReviewImageRepository imageRepository;
-
     private final UserRepository userRepository;
 
     private final StoreRepository storeRepository;
 
-    private final ImageUploadService imageUploadService;
+    private final ImageService imageUploadService;
 
 
     /**
-     *
      * @param requestDto 별점,리뷰 내용 ,가게 식별자
-     * @param userId 작성한 유저 식별자
-     * @param files 이미지
+     * @param userId     작성한 유저 식별자
+     * @param files      이미지
      * @return
      */
     @Transactional
@@ -64,12 +58,8 @@ public class ReviewServiceImpl implements ReviewService {
             Review.of(store, user, requestDto.getContent(), requestDto.getRating()));
 
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
-            List<String> urlList = imageUploadService.uploadFile(files);
-            for (String url : urlList) {
-                imageRepository.save(Image.of(review.getId(), url, ImageType.REVIEW)); // 이미지 저장
-            }
+            imageUploadService.fileSave(files, review.getId()); // 사진이 있으면 저장
         }
-
         return ReviewSaveResponseDto.toDto(review);
     }
 
