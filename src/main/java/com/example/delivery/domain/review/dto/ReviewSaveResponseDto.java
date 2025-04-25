@@ -21,8 +21,6 @@ public class ReviewSaveResponseDto {
 
     private final Integer rating;
 
-    private final String imgUrl;
-
     private final LocalDateTime updatedAt;
 
     public static ReviewSaveResponseDto toDto(Review review){
@@ -32,7 +30,6 @@ public class ReviewSaveResponseDto {
             review.getUser().getId(),
             review.getContent(),
             review.getRating(),
-            null,
             review.getUpdatedAt()
         );
     }

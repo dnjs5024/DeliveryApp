@@ -49,11 +49,11 @@ public class ReviewController {
         @SessionAttribute(name = "userId", required = false) Long userId, // 유저 아이디
         @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        reviewService.save(requestDto,userId, files);
+        ReviewSaveResponseDto responseDto = reviewService.save(requestDto,userId, files);
 
         return ResponseEntity
             .status(SuccessCode.REVIEW_CREATED.getHttpStatus())
-            .body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED));
+            .body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED,responseDto));
     }
 
 
@@ -70,6 +70,7 @@ public class ReviewController {
         @RequestParam(required = false) @Min(1) @Max(5) Long rating // 별점
     ) {
         List<ReviewFindResponseDto> responseDto = reviewService.findByFilter(storeId, rating);
+
         return ResponseEntity.status(SuccessCode.OK.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.OK, responseDto));
     }
@@ -79,6 +80,7 @@ public class ReviewController {
         @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
     ) {
         List<ReviewFindResponseDto> responseDto = reviewService.findUserId(userId);
+
         return ResponseEntity.status(SuccessCode.OK.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.OK, responseDto));
     }
