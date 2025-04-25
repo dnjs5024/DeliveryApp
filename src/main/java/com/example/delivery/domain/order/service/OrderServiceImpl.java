@@ -16,9 +16,9 @@ import com.example.delivery.domain.user.repository.UserRepository;
 import com.example.delivery.menu.entity.Menu;
 import com.example.delivery.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +26,10 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -86,10 +86,8 @@ public class OrderServiceImpl implements OrderService {
         Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
 
         //owner 주문목록(slice) 조회
-        Slice<Order> foundOrder = orderRepository.findByStoreId(foundStore.getId(), pageable);
-//        List<OrderResponseDTO> list = foundOrder.map(OrderResponseDTO::toDTO).toList();
-//        return new SliceImpl<>(list,pageable, foundOrder.hasNext()
-//        );
+        Slice<Order> foundOrder = orderRepository.findByStoreIdOrderByIdDesc(foundStore.getId(), pageable);
+
         return foundOrder.map(OrderResponseDTO::toDTO);
     }
 
@@ -105,4 +103,29 @@ public class OrderServiceImpl implements OrderService {
 
         return OrderResponseDTO.toDTO(foundOrder);
     }
+
+    //상태 변경
+    @Override
+    @Transactional
+    public OrderResponseDTO changeStatus(Long ownerId, Long storeId, Long orderId, OrderStatus orderStatus) {
+        //가게 권한
+        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);  // 2) 주문 조회 + 예외
+        //주문검증 , 엔티티 가져오기
+        Order order = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
+
+        //status 상태 비교
+        if(!order.getOrderStatus().isNext(orderStatus)) {
+            throw new CustomException(ErrorCode.ORDER_STATUS_CHANGE_NOT_ALLOWED);
+        }
+        log.info(order.getOrderStatus().toString());
+        //상태변경 update
+        log.info("+++==상태변경 ");
+        order.changeStatus(orderStatus);
+        log.info(order.getOrderStatus().toString());
+
+        //toDTO
+        return OrderResponseDTO.toDTO(order);
+    }
+
+
 }

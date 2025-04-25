@@ -2,6 +2,7 @@ package com.example.delivery.domain.order.service;
 
 import com.example.delivery.domain.order.dto.requestDTO.OrderRequestDTO;
 import com.example.delivery.domain.order.dto.responseDTO.OrderResponseDTO;
+import com.example.delivery.domain.order.entity.OrderStatus;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,4 +17,7 @@ public interface OrderService {
     Slice<OrderResponseDTO> getStoreOrders(Long userId,Long storeId, Pageable pageable);
     //주문 상세보기
     OrderResponseDTO getDetail(Long userId, Long storeId, Long orderId);
+
+    //상태 수정
+    OrderResponseDTO changeStatus(Long ownerId, Long storeId, Long orderId, OrderStatus orderStatus);
 }

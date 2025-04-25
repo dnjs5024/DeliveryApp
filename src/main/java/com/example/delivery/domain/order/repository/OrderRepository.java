@@ -1,12 +1,8 @@
 package com.example.delivery.domain.order.repository;
 
 import com.example.delivery.common.exception.base.CustomException;
-import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
-import com.example.delivery.domain.order.dto.responseDTO.OrderResponseDTO;
 import com.example.delivery.domain.order.entity.Order;
-import com.example.delivery.domain.order.entity.OrderStatus;
-import com.example.delivery.domain.review.entity.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,9 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    //한 가게 주문 전체 조회(사장)
+    //한 가게 주문 전체 조회(사장) , 최신순
     @EntityGraph(attributePaths = {"orderMenuList", "orderMenuList.menu"})
-    Slice<Order> findByStoreId(
+    Slice<Order> findByStoreIdOrderByIdDesc(
             Long storeId,
             Pageable pageable
     );
