@@ -8,11 +8,9 @@ import java.awt.*;
 
 public interface MenuRepository extends JpaRepository <Menu,Long> {
 
-    default Menu findByIdOrElseThrow(Long menuId){
-        return findById(menuId).orElseThrow(
+    default Menu findByIdOrElseThrow(Long id){
+        return findById(id).orElseThrow(
                 () -> new NotFoundException(ErrorCode.MENU_NOT_FOUND)
         );
     }
-
-
 }

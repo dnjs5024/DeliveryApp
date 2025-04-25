@@ -1,6 +1,7 @@
 package com.example.delivery.menu.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
+import com.example.delivery.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -21,6 +22,10 @@ public class Menu extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
+
     @Column(nullable = false)
     private String name;
 
@@ -33,7 +38,8 @@ public class Menu extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    private Menu(String name, int price, String description) {
+    private Menu(Store store, String name, int price, String description) {
+        this.store = store;
         this.name = name;
         this.price = price;
         this.description = description;
@@ -41,8 +47,8 @@ public class Menu extends BaseTimeEntity {
     }
 
     @Builder
-    public static Menu of (String name, int price, String description){
-        return new Menu(name, price, description);
+    public static Menu of (Store store, String name, int price, String description){
+        return new Menu(store, name, price, description);
     }
 
     public void update(String name, int price, String description) {
