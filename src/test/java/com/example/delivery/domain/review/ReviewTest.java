@@ -59,9 +59,17 @@ public class ReviewTest {
         // 리퀘스토디티오세팅
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder().content("너무 맛없어요!")
             .rating(1).build();
+        // Mock MultipartFile 생성 (이미지 흉내)
+        MockMultipartFile mockFile = new MockMultipartFile(
+            "file",                         // 파라미터 이름
+            "chicken.jpg",                  // 파일 이름
+            "image/jpeg",                   // Content-Type
+            "image-content".getBytes()      // 파일 내용
+        );
+        List<MultipartFile> files = List.of(mockFile);
 
         // 웬이요
-        reviewService.updateReview(requestDto,1L,1L);
+        reviewService.updateReview(requestDto, 1L, 1L, files);
 
         //업데이트 데이터 체크요 ㅁ니;ㅇ럼냐ㅗㅓ랴매ㅏㅣㅗ
         List<Review> review2 = reviewRepository.findByUserId(1L);
