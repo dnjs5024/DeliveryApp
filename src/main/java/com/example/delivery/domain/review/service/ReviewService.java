@@ -1,9 +1,9 @@
-package com.example.delivery.review.service;
+package com.example.delivery.domain.review.service;
 
 
-import com.example.delivery.review.dto.ReviewFindResponseDto;
-import com.example.delivery.review.dto.ReviewSaveRequestDto;
-import com.example.delivery.review.dto.ReviewSaveResponseDto;
+import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
+import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
+import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,11 +1,11 @@
-package com.example.delivery.review.controller;
+package com.example.delivery.domain.review.controller;
 
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
-import com.example.delivery.review.dto.ReviewFindResponseDto;
-import com.example.delivery.review.dto.ReviewSaveRequestDto;
-import com.example.delivery.review.dto.ReviewSaveResponseDto;
-import com.example.delivery.review.service.ReviewService;
+import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
+import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
+import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
+import com.example.delivery.domain.review.service.ReviewService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.util.List;

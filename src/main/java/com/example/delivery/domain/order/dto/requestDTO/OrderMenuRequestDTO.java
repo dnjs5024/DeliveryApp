@@ -1,7 +1,7 @@
 package com.example.delivery.domain.order.dto.requestDTO;
 
 import com.example.delivery.domain.order.entity.OrderMenu;
-import com.example.delivery.menu.entity.Menu;
+import com.example.delivery.domain.menu.entity.Menu;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;

@@ -45,8 +45,8 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer rating; // 별점
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReviewImage> reviewImage = new ArrayList<>();
+    //@OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    //private List<ReviewImage> reviewImage = new ArrayList<>();
 
     private Review(Store store, User user, String content, Integer rating) {
         this.store = store;
