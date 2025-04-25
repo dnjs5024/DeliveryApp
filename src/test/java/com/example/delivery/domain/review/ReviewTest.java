@@ -1,7 +1,7 @@
 package com.example.delivery.domain.review;
 
 import com.example.delivery.domain.image.entity.ImageType;
-import com.example.delivery.domain.image.service.ImageService;
+import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
 import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.domain.review.dto.ReviewUpdateRequestDto;
@@ -33,7 +33,7 @@ public class ReviewTest {
     @Autowired
     ReviewRepository reviewRepository;
     @Autowired
-    ImageService imageUploadService;
+    ImageServiceImpl imageUploadService;
     @Autowired
     ReviewService reviewService;
 

@@ -4,7 +4,7 @@ import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.entity.ImageType;
-import com.example.delivery.domain.image.service.ImageService;
+import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
@@ -32,7 +32,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final StoreRepository storeRepository;
 
-    private final ImageService imageUploadService;
+    private final ImageServiceImpl imageUploadService;
 
 
     /**
