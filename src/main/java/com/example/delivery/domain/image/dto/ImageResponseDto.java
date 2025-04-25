@@ -13,12 +13,12 @@ public class ImageResponseDto {
 
     private final String imgUrl;
 
-    private final String key;
+    private final String pKey;
 
     public static ImageResponseDto toDto(Image image) {
         return new ImageResponseDto(
             image.getImgUrl(),
-            image.getKey()
+            image.getPKey()
         );
     }
 

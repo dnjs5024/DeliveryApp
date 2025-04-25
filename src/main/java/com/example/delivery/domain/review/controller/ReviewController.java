@@ -7,6 +7,7 @@ import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
 import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.domain.review.dto.ReviewUpdateRequestDto;
 import com.example.delivery.domain.review.service.ReviewService;
+import com.example.delivery.domain.user.dto.SessionUserDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -35,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ReviewController {
 
     private final ReviewService reviewService;
-
     /**
      * 리뷰 저장 컨트롤러
      *
@@ -46,16 +46,15 @@ public class ReviewController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ReviewSaveResponseDto>> saveReview(
         @RequestPart("request") @Valid ReviewSaveRequestDto requestDto,
-        @SessionAttribute(name = "userId", required = false) Long userId, // 유저 아이디
+        @SessionAttribute(name = "loginUser", required = false) SessionUserDto loginUser, // 유저 아이디
         @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {
-        ReviewSaveResponseDto responseDto = reviewService.save(requestDto, userId, files);
+        ReviewSaveResponseDto responseDto = reviewService.save(requestDto, 1L, files);
 
         return ResponseEntity
             .status(SuccessCode.REVIEW_CREATED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_CREATED, responseDto));
     }
-
 
     /**
      * 가게 별 리뷰 조회, 별점 기준 리뷰 조회 메소드
@@ -77,9 +76,9 @@ public class ReviewController {
 
     @GetMapping("/user")
     public ResponseEntity<ApiResponseDto<List<ReviewFindResponseDto>>> findByUserId(
-        @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
+        @SessionAttribute(name = "loginUser", required = false) SessionUserDto loginUser // 유저 아이디
     ) {
-        List<ReviewFindResponseDto> responseDto = reviewService.findUserId(userId);
+        List<ReviewFindResponseDto> responseDto = reviewService.findUserId(loginUser.getId());
 
         return ResponseEntity.status(SuccessCode.OK.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.OK, responseDto));
@@ -88,9 +87,9 @@ public class ReviewController {
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<ApiResponseDto<?>> deleteById(
         @PathVariable("reviewId") @Min(1) Long reviewId,
-        @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
+        @SessionAttribute(name = "loginUser", required = false) SessionUserDto loginUser // 유저 아이디
     ) {
-        reviewService.deleteReview(reviewId, userId);
+        reviewService.deleteReview(reviewId, loginUser.getId());
         return ResponseEntity.status(SuccessCode.REVIEW_DELETED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_DELETED));
     }
@@ -100,9 +99,9 @@ public class ReviewController {
         @PathVariable("reviewId") @Min(1) Long reviewId,
         @RequestPart(value = "files", required = false) List<MultipartFile> files,
         @RequestPart("request") @Valid ReviewUpdateRequestDto requestDto,
-        @SessionAttribute(name = "userId", required = false) Long userId // 유저 아이디
+        @SessionAttribute(name = "loginUser", required = false) SessionUserDto loginUser // 유저 아이디
     ) {
-        reviewService.updateReview(requestDto, userId, reviewId, files);
+        reviewService.updateReview(requestDto, loginUser.getId(), reviewId, files);
         return ResponseEntity.status(SuccessCode.REVIEW_UPDATED.getHttpStatus())
             .body(ApiResponseDto.success(SuccessCode.REVIEW_UPDATED));
     }

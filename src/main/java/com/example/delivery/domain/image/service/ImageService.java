@@ -16,5 +16,5 @@ public interface ImageService {
 
     void update(Long targetId, ImageType imageType, List<MultipartFile> fileList);
 
-    void delete(List<String> keys);
+    void delete(List<String> keys,ImageType imageType, Long targetId);
 }

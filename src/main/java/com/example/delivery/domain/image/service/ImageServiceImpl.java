@@ -82,7 +82,7 @@ public class ImageServiceImpl implements ImageService {
         while (iterator.hasNext()) {
             String url = (String) urlMap.get(iterator.next());
             String key = (String) urlMap.get(iterator.next());
-            imageRepository.save(Image.of(targetId, url, type));
+            imageRepository.save(Image.of(targetId, url, type, key));
         }
     }
 
@@ -101,12 +101,13 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void update(Long targetId, ImageType imageType, List<MultipartFile> fileList) {
-        delete(find(targetId, imageType).stream().map(ImageResponseDto::getKey).toList());// 기존 사진 삭제
+        delete(find(targetId, imageType).stream().map(ImageResponseDto::getPKey).toList(),
+            imageType, targetId);// 기존 사진 삭제
         uploadFile(fileList);
     }
 
     @Override
-    public void delete(List<String> keys) {
+    public void delete(List<String> keys, ImageType imageType, Long targetId) {
         for (String key : keys) {
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)  // 연결 된 대상 버킷 이름
@@ -114,5 +115,10 @@ public class ImageServiceImpl implements ImageService {
                 .build();
             s3Client.deleteObject(deleteObjectRequest);
         }
+        for(ImageResponseDto responseDto :find(targetId,imageType)){
+            imageRepository.delete(Image.of(targetId,responseDto.getImgUrl(),imageType,responseDto.getPKey()));
+        }
+
     }
+
 }

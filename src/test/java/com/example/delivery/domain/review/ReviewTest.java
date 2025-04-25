@@ -1,5 +1,7 @@
 package com.example.delivery.domain.review;
 
+import com.example.delivery.domain.image.dto.ImageResponseDto;
+import com.example.delivery.domain.image.entity.Image;
 import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
@@ -14,7 +16,14 @@ import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.entity.User.Role;
 import com.example.delivery.domain.user.repository.UserRepository;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,7 +151,8 @@ public class ReviewTest {
 
     @Transactional
     @Test
-    void 리뷰_저장_성공() {
+
+    void 리뷰_저장_성공() throws IOException {
         // given
         User user = new User("jun@example.com", "encoded-password", Role.USER, "준이");
         userRepository.save(user);
@@ -165,22 +175,39 @@ public class ReviewTest {
             Review.of(store, user, requestDto.getContent(), requestDto.getRating())
         );
 
-        // Mock MultipartFile 생성 (이미지 흉내)
-        MockMultipartFile mockFile = new MockMultipartFile(
-            "file",                         // 파라미터 이름
-            "chicken.jpg",                  // 파일 이름
-            "image/jpeg",                   // Content-Type
-            "image-content".getBytes()      // 파일 내용
-        );
-        List<MultipartFile> files = List.of(mockFile);
+
+        // 진짜 사진
+
+        byte[] fileContent1 = Files.readAllBytes(Path.of("C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png"));
+        byte[] fileContent2 = Files.readAllBytes(Path.of("C:/Users/dnjs7/OneDrive/사진/스크린샷/ww.png"));
+
+        MockMultipartFile mockMultipartFile1 = new MockMultipartFile("files", "ee.png", "image/png", fileContent1);
+        MockMultipartFile mockMultipartFile2 = new MockMultipartFile("files", "ww.png", "image/png", fileContent2);
+        List<MultipartFile> files = new ArrayList<>();
+        files.add(mockMultipartFile1);
+        files.add(mockMultipartFile2);
+
+//
+//        // Mock MultipartFile 생성 (이미지 흉내)
+//        MockMultipartFile mockFile = new MockMultipartFile(
+//            "file",                         // 파라미터 이름
+//            "chicken.jpg",                  // 파일 이름
+//            "image/jpeg",                   // Content-Type
+//            "image-content".getBytes()      // 파일 내용
+//        );
+//        List<MultipartFile> files = List.of(mockFile);
         imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW);
         // then
         Review savedReview = reviewRepository.findById(review.getId())
             .orElseThrow(() -> new RuntimeException("리뷰 저장 실패"));
 
+        List<ImageResponseDto> image = imageUploadService.find(review.getId(),ImageType.REVIEW);//db들어간 데이터 체크
+
+
         assert savedReview.getContent().equals("너무 맛있어요!");
         assert savedReview.getRating() == 5;
         assert savedReview.getUser().getId().equals(user.getId());
+
     }
 
 }

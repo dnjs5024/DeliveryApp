@@ -30,26 +30,28 @@ public class Image extends BaseTimeEntity {
     private String imgUrl;
 
     @Column(nullable = false)
-    private String key;
+    private String pKey;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ImageType type; // STORE, MENU,
 
-    private Image(Long targetId, String imgUrl,ImageType type) {
+    private Image(Long targetId, String imgUrl,ImageType type, String pKey) {
         this.targetId = targetId;
         this.imgUrl = imgUrl;
         this.type = type;
+        this.pKey = pKey;
     }
 
-    public static Image of(Long targetId, String imgUrl,ImageType type){
-        return new Image(targetId, imgUrl, type);
+    public static Image of(Long targetId, String imgUrl,ImageType type,String pKey){
+        return new Image(targetId, imgUrl, type, pKey);
     }
 
-    public void update(Long targetId, String imgUrl,ImageType type) {
+    public void update(Long targetId, String imgUrl,ImageType type,String pKey) {
         this.targetId = targetId;
         this.imgUrl = imgUrl;
         this.type = type;
+        this.pKey = pKey;
     }
 
 }

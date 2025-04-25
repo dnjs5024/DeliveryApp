@@ -3,6 +3,7 @@ package com.example.delivery.domain.review.service;
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
+import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.review.entity.Review;
@@ -61,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
             imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW); // 사진이 있으면 저장
         }
+        // 저장 실패면 사진 삭제 고려
         return ReviewSaveResponseDto.toDto(review);
     }
 
@@ -150,7 +152,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(Long reviewId, Long userId) {
         isSelf(userId);
-        reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));
+
+        reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));// 리뷰삭제
+
+        List<ImageResponseDto> list = imageUploadService.find(reviewId, ImageType.REVIEW); // 사진 삭제
+        imageUploadService.delete(list.stream().map(ImageResponseDto::getPKey).toList(),
+            ImageType.REVIEW, reviewId);
     }
 
     /**
