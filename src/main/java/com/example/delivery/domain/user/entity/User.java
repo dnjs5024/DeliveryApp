@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false)
     private String username;
@@ -47,6 +49,5 @@ public class User extends BaseTimeEntity{
     public void changeRole(Role newRole) {
         this.role = newRole;
     }
-
 
 }

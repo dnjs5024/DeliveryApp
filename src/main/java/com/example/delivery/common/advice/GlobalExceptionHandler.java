@@ -7,8 +7,10 @@ package com.example.delivery.common.advice;
 import com.example.delivery.common.exception.base.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.response.ApiResponseDto;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,10 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -31,7 +37,7 @@ public class GlobalExceptionHandler {
     private final ServletRequest httpServletRequest;
 
     /**
-     * DTO 유효성 검증 실패 시 발생하는 예외 처리
+     * DTO 유효성 검증 실패 시 Validated
      * - @Valid 어노테이션이 붙은 DTO 필드 검증 실패 시 발생
      * - 예: @NotBlank, @Size 등 제약 조건을 위반한 경우
      * - 사용자가 설정한 message 값을 추출하여 클라이언트에게 응답
@@ -45,6 +51,18 @@ public class GlobalExceptionHandler {
                 .orElse("잘못된 요청입니다");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponseDto.fail(errorMessage, httpServletRequest.getRequestURI()));
+    }
+
+    /** DTO 타입 아닌 값들 검증 실패 시
+     * - @Validated 어노테이션이 붙은 DTO 필드 검증 실패 시 발생
+     * - 사용자가 설정한 message 값을 추출하여 클라이언트에게 응답
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponseDto<?>> handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest httpServletRequest) {
+        log.error("Validated 유효성 검증 실패 " + e.getMessage(), e);
+        String errorMessage = e.getConstraintViolations().iterator().next().getMessage();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ApiResponseDto.fail(errorMessage, httpServletRequest.getRequestURI()));
     }
 
     /**
@@ -162,4 +180,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR, httpServletRequest.getRequestURI()));
     }
+
+
+
 }
