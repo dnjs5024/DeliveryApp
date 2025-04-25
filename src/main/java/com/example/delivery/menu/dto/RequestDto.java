@@ -16,12 +16,12 @@ public class RequestDto {
     @NotBlank
     private String name;
 
-    @Min(0)
+    @Min(value = 0)
     private int price;
 
     private String description;
 
-    public RequestDto(Long id, String name, int price, String description) {
+    public RequestDto (Long id, String name, int price, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
