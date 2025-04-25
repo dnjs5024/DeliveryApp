@@ -5,39 +5,31 @@ import com.example.delivery.domain.review.entity.Review;
 import java.time.LocalDateTime;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class ReviewSaveResponseDto {
 
-    private Long reviewId;
+    private final Long reviewId;
 
-    private Long storeId;
+    private final Long storeId;
 
-    private Long userId;
+    private final Long userId;
 
-    private String content;
+    private final String content;
 
-    private Integer rating;
+    private final Integer rating;
 
-    private String imgUrl;
-
-    private LocalDateTime updatedAt;
-
-    public ReviewSaveResponseDto(Long id, String content, Integer rating, String imgUrl,LocalDateTime updatedAt) {
-        this.reviewId = id;
-        this.content = content;
-        this.rating = rating;
-        this.imgUrl = imgUrl;
-        this.updatedAt = updatedAt;
-
-    }
+    private final LocalDateTime updatedAt;
 
     public static ReviewSaveResponseDto toDto(Review review){
         return new ReviewSaveResponseDto(
             review.getId(),
+            review.getStore().getId(),
+            review.getUser().getId(),
             review.getContent(),
             review.getRating(),
-            null,
             review.getUpdatedAt()
         );
     }

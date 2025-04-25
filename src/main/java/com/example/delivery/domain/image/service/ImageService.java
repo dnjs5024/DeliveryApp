@@ -1,8 +1,11 @@
-package com.example.delivery.common.service;
+package com.example.delivery.domain.image.service;
 
 
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.enums.ErrorCode;
+import com.example.delivery.domain.image.entity.Image;
+import com.example.delivery.domain.image.entity.ImageType;
+import com.example.delivery.domain.image.repository.ImageRepository;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 @Service
 @RequiredArgsConstructor
-public class ImageUploadService {
+public class ImageService {
+
+    private final ImageRepository imageRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
@@ -29,6 +33,12 @@ public class ImageUploadService {
 
     private final S3Client s3Client;
 
+    /**
+     * 외부 클라우드서버에 사진 저장 후 사진 url 리턴
+     *
+     * @param fileList
+     * @return
+     */
     public List<String> uploadFile(List<MultipartFile> fileList) {
 
         List<String> urlList = new ArrayList<>();
@@ -51,5 +61,14 @@ public class ImageUploadService {
         }
         return urlList;
     }
+
+    public void fileSave(List<MultipartFile> files, Long targetId,ImageType imageType) {
+
+        List<String> urlList = uploadFile(files); // 클라우드 서버에 사진 업로드
+        for (String url : urlList) { // urlList 없으면 동작 x
+            imageRepository.save(Image.of(targetId, url, imageType));
+        }
+    }
+
 
 }

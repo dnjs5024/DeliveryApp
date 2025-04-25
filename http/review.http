@@ -1,5 +1,8 @@
-POST http://localhost/api/reviews
+
+### 리뷰 저장 요청 (자동으로 쿠키 붙음)
+POST http://localhost:8080/api/reviews
 Content-Type: multipart/form-data; boundary=MyBoundary
+
 
 --MyBoundary
 Content-Disposition: form-data; name="request"
@@ -7,7 +10,6 @@ Content-Type: application/json
 
 {
   "storeId": 1,
-  "userId": 1,
   "content": "리뷰 내용",
   "rating": 5
 }
@@ -22,4 +24,31 @@ Content-Type: image/png
 < C:/Users/dnjs7/OneDrive/사진/스크린샷/ww.png
 --MyBoundary--
 ### 리뷰 삭제 테스트
-DELETE http://localhost/api/reviews/1
+DELETE http://localhost:8080/api/reviews/1
+
+### 리뷰 필터 조회 (storeId로 조회)
+GET http://localhost:8080/api/reviews/filter?storeId=1
+
+###
+
+### 리뷰 필터 조회 (rating으로 조회)
+GET http://localhost:8080/api/reviews?rating=5
+
+###
+
+### 내가 쓴 리뷰 조회
+GET http://localhost:8080/api/reviews/user?userId=1
+
+###
+
+### 리뷰 수정
+PATCH http://localhost:8080/api/reviews/3
+Content-Type: application/json
+
+{
+  "content": "내용을 수정했어요!",
+  "rating": 4
+}
+
+###
+
