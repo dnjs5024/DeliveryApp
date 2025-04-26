@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.jackson.Jacksonized;
+import com.example.delivery.domain.menu.entity.Menu;
 
 @Getter
 @Builder
