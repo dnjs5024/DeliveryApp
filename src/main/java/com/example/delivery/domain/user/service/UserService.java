@@ -13,4 +13,5 @@ public interface UserService {
     User login(String email, String password);
     void logout(HttpServletRequest request);
     void withdraw(HttpServletRequest request, LoginRequestDto loginRequestDto);
+    User findUser(String email);
 }

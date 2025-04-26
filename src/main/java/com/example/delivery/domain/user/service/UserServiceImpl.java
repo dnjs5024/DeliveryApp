@@ -92,5 +92,10 @@ public class UserServiceImpl implements UserService {
         request.getSession().invalidate();
     }
 
+    @Override
+    public User findUser(String email) {
+        return userRepository.findUserByEmailOrElseThrow(email);
+    }
+
 
 }
