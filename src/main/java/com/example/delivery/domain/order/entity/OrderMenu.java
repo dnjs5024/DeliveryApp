@@ -1,6 +1,5 @@
 package com.example.delivery.domain.order.entity;
 
-import com.example.delivery.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
