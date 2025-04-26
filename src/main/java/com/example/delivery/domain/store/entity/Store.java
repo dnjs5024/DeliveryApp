@@ -1,7 +1,7 @@
 package com.example.delivery.domain.store.entity;
 
 import com.example.delivery.domain.user.entity.User;
-import com.example.delivery.menu.entity.Menu;
+import com.example.delivery.domain.menu.entity.Menu;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

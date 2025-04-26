@@ -6,6 +6,7 @@ import com.example.delivery.common.exception.enums.ErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import com.example.delivery.domain.store.entity.Store;
 
 import java.util.List;
 
@@ -23,6 +24,4 @@ public interface MenuRepository extends JpaRepository <Menu,Long> {
     //List<Menu> findAllByStoreAndDeletedFalse(Store store); <이것도 오류가 나서 JPQL로 작성
     @Query("SELECT m FROM Menu m WHERE m.store = :store AND m.deleted = false")
     List<Menu> findActiveMenusByStore(@Param("store") Store store);
-
-
 }
