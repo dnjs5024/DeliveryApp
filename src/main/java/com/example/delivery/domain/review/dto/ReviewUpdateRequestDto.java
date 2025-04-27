@@ -13,7 +13,6 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @Builder
 @Jacksonized
-@RequiredArgsConstructor
 public class ReviewUpdateRequestDto {
 
     @Size(max = 50)
