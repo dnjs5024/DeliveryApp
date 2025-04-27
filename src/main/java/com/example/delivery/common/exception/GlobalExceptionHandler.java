@@ -1,14 +1,11 @@
-package com.example.delivery.common.advice;
-// 패키지를 advice 로 만든 이유
-// 이 패키지는 흐름을 가로채서 공통적으로 처리하는 코드를 말한다. 프로젝트 전체에서 공통으로 해야되는 처리를 모아두는 패키지
-// 1. 공통 흐름 관리 코드를 '핵심 도메인' 코드와 분리하려고 : 핵심 기능 코드와 필터 로깅 인증 등등 코드가 섞이면 더러워져서 따로 빼서 관리하려고
-// 2. 이전에 비해 도메인도 늘었고 프로젝트도 개인이 하는것에 비해 커졌기에 관리와 가독성의 이유로 이렇게 분리함
+package com.example.delivery.common.exception;
 
-import com.example.delivery.common.exception.base.CustomException;
+import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.response.ApiResponseDto;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,11 +21,25 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final ServletRequest httpServletRequest;
+
+    // ========================================================================================
+    // 공통 실패 응답 만드는 메소드
+    // ========================================================================================
+    private ResponseEntity<ApiResponseDto<?>> errorResponse(ErrorCode errorCode, HttpServletRequest request) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponseDto.fail(errorCode));
+    }
+
+    private ResponseEntity<ApiResponseDto<?>> errorResponse(ErrorCode errorCode, String message, HttpServletRequest request) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(ApiResponseDto.fail(errorCode, message));
+    }
 
     /**
      * DTO 유효성 검증 실패 시 발생하는 예외 처리
@@ -37,14 +48,27 @@ public class GlobalExceptionHandler {
      * - 사용자가 설정한 message 값을 추출하여 클라이언트에게 응답
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponseDto<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ApiResponseDto<?>> handleMethodArgumentNotValidException(MethodArgumentNotValidException
+                                                                                           e, HttpServletRequest httpServletRequest) {
         log.error("유효성 검증 실패 " + e.getMessage(), e);
         String errorMessage = e.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(fieldError -> fieldError.getDefaultMessage())
                 .orElse("잘못된 요청입니다");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(errorMessage, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.BAD_REQUEST, errorMessage, httpServletRequest);
+    }
+
+    /**
+     * DTO 타입 아닌 값들 검증 실패 시
+     * - @Validated 어노테이션이 붙은 DTO 필드 검증 실패 시 발생
+     * - 사용자가 설정한 message 값을 추출하여 클라이언트에게 응답
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiResponseDto<?>> handleConstraintViolationException(ConstraintViolationException
+                                                                                        e, HttpServletRequest httpServletRequest) {
+        log.error("Validated 유효성 검증 실패 " + e.getMessage(), e);
+        String errorMessage = e.getConstraintViolations().iterator().next().getMessage();
+        return errorResponse(ErrorCode.BAD_REQUEST, errorMessage, httpServletRequest);
     }
 
     /**
@@ -56,12 +80,12 @@ public class GlobalExceptionHandler {
         log.error(
                 "handlerMethodArgumentTypeMismatchException() in GlobalExceptionHandler throw MethodArgumentTypeMismatchException : {}",
                 e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(ErrorCode.BAD_REQUEST, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.BAD_REQUEST, httpServletRequest);
     }
 
     /**
      * @Validated 또는 @RequestParam 등에서 유효성 검증이 실패했을 때 발생
+     * 타입이 아예 다를 때 발생하는 예외
      * - Spring 6+에서 유효성 관련 검증 실패 시 발생하는 예외
      */
     @ExceptionHandler(value = {HandlerMethodValidationException.class})
@@ -69,10 +93,7 @@ public class GlobalExceptionHandler {
         log.error(
                 "handlerHandlerMethodValidationException() in GlobalExceptionHandler throw HandlerMethodValidationException : {}",
                 e.getMessage());
-
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(ErrorCode.BAD_REQUEST, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.BAD_REQUEST, httpServletRequest);
     }
 
     /**
@@ -80,12 +101,13 @@ public class GlobalExceptionHandler {
      * - 예: @RequestHeader("Authorization") 이 누락됐을 때
      */
     @ExceptionHandler(value = {MissingRequestHeaderException.class})
-    public ResponseEntity<ApiResponseDto<?>> handlerMissingRequestHeaderException(Exception e, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ApiResponseDto<?>> handlerMissingRequestHeaderException(Exception e, HttpServletRequest
+            httpServletRequest) {
         log.error(
                 "handlerMissingRequestHeaderException() in GlobalExceptionHandler throw MissingRequestHeaderException : {}",
                 e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(ErrorCode.MISSING_PARAMETER,httpServletRequest.getRequestURI()));
+                .body(ApiResponseDto.fail(ErrorCode.MISSING_PARAMETER, httpServletRequest.getRequestURI()));
     }
 
     /**
@@ -97,12 +119,11 @@ public class GlobalExceptionHandler {
         log.error(
                 "handlerMissingServletRequestParameterException() in GlobalExceptionHandler throw MissingServletRequestParameterException : {}",
                 e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(ErrorCode.INVALID_PARAMETER, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.INVALID_PARAMETER, httpServletRequest);
     }
 
     /**
-     * 요청 본문(JSON 등)이 올바르지 않아 역직렬화가 실패한 경우
+     * 요청 본문(JSON 등)이 올바르지 않아 역직렬화가 실패한 경우, JSON 파싱 실패
      * - 예: 잘못된 JSON 형식, 타입 불일치 등
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -110,20 +131,19 @@ public class GlobalExceptionHandler {
         log.error(
                 "handleMessageNotReadableException() in GlobalExceptionHandler throw HttpMessageNotReadableException : {}",
                 e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponseDto.fail(ErrorCode.BAD_REQUEST, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.BAD_REQUEST, httpServletRequest);
     }
 
     /**
-     * 존재하지 않는 URI로 접근했을 때 발생하는 예외 처리
+     * 존재하지 않는 URI로 접근했을 때 발생하는 예외 처리 404
      * - 예: 잘못된 URL 요청
      */
     @ExceptionHandler(value = {NoHandlerFoundException.class})
-    public ResponseEntity<ApiResponseDto<?>> handleNoPageFoundException(Exception e, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ApiResponseDto<?>> handleNoPageFoundException(Exception e, HttpServletRequest
+            httpServletRequest) {
         log.error("handleNoPageFoundException() in GlobalExceptionHandler throw NoHandlerFoundException : {}",
-                e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponseDto.fail(ErrorCode.NOT_FOUND, httpServletRequest.getRequestURI()));
+                    e.getMessage());
+            return errorResponse(ErrorCode.NOT_FOUND, httpServletRequest);
     }
 
     /**
@@ -131,12 +151,12 @@ public class GlobalExceptionHandler {
      * - 예: POST만 가능한 엔드포인트에 GET 요청 등
      */
     @ExceptionHandler(value = {HttpRequestMethodNotSupportedException.class})
-    public ResponseEntity<ApiResponseDto<?>> handleMethodNotSupportedException(Exception e, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ApiResponseDto<?>> handleMethodNotSupportedException(Exception e, HttpServletRequest
+            httpServletRequest) {
         log.error(
                 "handleMethodNotSupportedException() in GlobalExceptionHandler throw HttpRequestMethodNotSupportedException : {}",
                 e.getMessage());
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ApiResponseDto.fail(ErrorCode.METHOD_NOT_ALLOWED, httpServletRequest.getRequestURI()));
+        return errorResponse(ErrorCode.METHOD_NOT_ALLOWED, httpServletRequest);
     }
 
     /**
@@ -145,10 +165,10 @@ public class GlobalExceptionHandler {
      * - 예: 로그인 실패, 권한 없음 등
      */
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ApiResponseDto<?>> handleCustomException(CustomException e, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ApiResponseDto<?>> handleCustomException(CustomException e, HttpServletRequest
+            httpServletRequest) {
         log.error("handleException() in GlobalExceptionHandler throw BusinessException : {}", e.getMessage());
-        return ResponseEntity.status(e.getHttpStatus())
-                .body(ApiResponseDto.fail(e.getMessage(), httpServletRequest.getRequestURI()));
+        return errorResponse(e.getErrorCode(), httpServletRequest);
     }
 
     /**
@@ -159,7 +179,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDto<?>> handlerException(Exception e, HttpServletRequest httpServletRequest) {
         log.error("handlerException() in GlobalExceptionHandler throw Exception : {} {}", e.getClass(), e.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponseDto.fail(ErrorCode.INTERNAL_SERVER_ERROR, httpServletRequest.getRequestURI()));
+       return errorResponse(ErrorCode.INTERNAL_SERVER_ERROR, httpServletRequest);
     }
+
+
 }

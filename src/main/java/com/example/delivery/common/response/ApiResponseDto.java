@@ -1,13 +1,9 @@
 package com.example.delivery.common.response;
-//API 응답의 공통 포멧
-// 1. 응답이 항성 똑같은 구조라 에러 코드를 복잡하게 안짜도 되고 보기에도 편함
-// 2. 백엔드 입장에선 API가 늘어나도 다 같은 방식으로 응답하기 때문에 유지보수에도 좋음
-// 3. 예외를 하나의 포멧으로 포장하면 클라이언트 입장에서 status, message만 보면 되니까 좋음
-
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.micrometer.common.lang.Nullable;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
@@ -20,15 +16,14 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 /**
  * 모든 API 응답을 하나의 공통 포맷으로 정의한 DTO
  * - 성공/실패 응답 모두 이 포맷을 따른다
- * - timestamp, statusCode, message, path, data를 포함한다
+ * - statusCode, message, data 를 포함한다
  */
+@JsonInclude(value = NON_NULL)
 @Builder
 public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방식으로 생성자/getter/equals 를 자동으로 만들어줌, 불변객체임
-                                 @JsonInclude(NON_NULL) LocalDateTime timestamp,                       // 요청 시각
                                  int statusCode,                                // HTTP 상태 코드 숫자 (예: 400)
-                                 @NonNull String message,                       // 응답 메시지 (ex: "가게 생성 성공", "잘못된 요청입니다")
-                                 @JsonInclude(value = NON_NULL)String path,                                   // 요청 경로 (ex : api/stores)
-                                 @JsonInclude(value = NON_NULL) T data          // 실제 응답 데이터 (nullable), null이면 JSON에서 제외됨
+                                 @NotNull String message,                       // 응답 메시지 (ex: "가게 생성 성공", "잘못된 요청입니다")
+                                 T data// 실제 응답 데이터 (nullable), null이면 JSON에서 제외됨
 ) {
     /**
      * 성공 응답을 생성하는 메소드 (데이터 O)
@@ -41,10 +36,8 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
                                                 @Nullable final T data
                                                 ) {
         return new ApiResponseDto<>(
-                null,
                 successCode.getHttpStatus().value(),
                 successCode.getMessage(),
-                null,
                 data
         );
     }
@@ -61,15 +54,12 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
      * 실패 응답을 생성하는 메소드 (ErrorCode 기반)
      *
      * @param errorCode 에러 코드 Enum
-     * @param path 요청 경로
      * @return ApiResponseDto
      */
-    public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode, final String path) {
+    public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode) {
         return new ApiResponseDto<>(
-                LocalDateTime.now(),
                 errorCode.getHttpStatus().value(),
                 errorCode.getMessage(),
-                path,
                 null
         );
     }
@@ -77,16 +67,12 @@ public record ApiResponseDto<T>( // record: dto를 간결하게 작성하는 방
     /**
      * 실패 응답을 생성하는 메소드 (직접 커스텀 메시지를 줄 경우)
      *
-     * @param message 커스텀 실패 메시지
-     * @param path 요청 경로
      * @return ApiResponseDto
      */
-    public static <T> ApiResponseDto<T> fail(final String message, final String path) {
+    public static <T> ApiResponseDto<T> fail(final ErrorCode errorCode, final String message) {
         return new ApiResponseDto<>(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
+                errorCode.getHttpStatus().value(),
                 message,
-                path,
                 null
         );
     }
