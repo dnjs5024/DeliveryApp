@@ -1,19 +1,15 @@
 package com.example.delivery.domain.store.repository;
 
-import com.example.delivery.common.exception.base.CustomException;
+import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.entity.StoreStatus;
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

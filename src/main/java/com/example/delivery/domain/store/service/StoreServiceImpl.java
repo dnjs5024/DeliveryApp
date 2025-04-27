@@ -1,8 +1,7 @@
 package com.example.delivery.domain.store.service;
 
-import com.example.delivery.common.constants.BusinessRuleConstants;
-import com.example.delivery.common.exception.base.CustomException;
-import com.example.delivery.common.exception.base.NotFoundException;
+import com.example.delivery.common.exception.CustomException;
+import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.store.dto.StoreRequestDto;
 import com.example.delivery.domain.store.dto.StoreResponseDto;
