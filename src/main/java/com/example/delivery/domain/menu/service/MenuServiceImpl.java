@@ -1,4 +1,4 @@
-package com.example.delivery.menu.service;
+package com.example.delivery.domain.menu.service;
 
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;

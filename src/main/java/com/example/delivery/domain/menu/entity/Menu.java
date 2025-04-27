@@ -1,7 +1,6 @@
 package com.example.delivery.menu.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
-import com.example.delivery.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
