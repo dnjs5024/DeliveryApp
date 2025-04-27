@@ -2,13 +2,14 @@ package com.example.delivery.domain.image.service;
 
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageService {
 
-    Map<String, Object> uploadFile(List<MultipartFile> fileList);
+    List<Map<String, Object>> uploadFile(List<MultipartFile> fileList) throws IOException;
 
     void fileSave(List<MultipartFile> files, Long targetId, ImageType type);
 
