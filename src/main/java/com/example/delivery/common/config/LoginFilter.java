@@ -27,6 +27,10 @@ public class LoginFilter implements Filter {
     private static final String STORE_API_PREFIX = "/api/store";
     private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login"};
 
+    private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login","/api/review"};
+    private final UserRepository userRepository;
+
+
 
     private final UserService userService;
 

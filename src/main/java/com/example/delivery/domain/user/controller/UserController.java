@@ -32,14 +32,14 @@ public class UserController {
     {
         UserResponseDto userResponseDto = userService.signup(dto.email(), dto.password(), dto.role(), dto.username());
         return ResponseEntity.status(
-                SuccessCode.SIGNUP_SUCCESS.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.SIGNUP_SUCCESS, userResponseDto));
+            SuccessCode.SIGNUP_SUCCESS.getHttpStatus()).body(
+            ApiResponseDto.success(SuccessCode.SIGNUP_SUCCESS, userResponseDto));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<Void>> login(
-            @Valid @RequestBody LoginRequestDto dto,
-            HttpServletRequest request
+        @Valid @RequestBody LoginRequestDto dto,
+        HttpServletRequest request
     ) {
         // 세션 가져오기
         HttpSession session = request.getSession(false);
@@ -63,7 +63,7 @@ public class UserController {
         // 세션 생성 및 로그인 정보 저장
         // User 엔티티는 테이블과 매핑되기 때문에 세션에 User 를 직접 저장하지 않고 SessionUserDto 를 저장한다.
         SessionUserDto sessionUserDto = new SessionUserDto(user.getId(), user.getEmail(), user.getRole());
-        
+
         // 이전 세션 체크후 제거
         HttpSession oldSession = request.getSession(false);
         if (oldSession != null) {
@@ -73,32 +73,32 @@ public class UserController {
         request.getSession(true).setAttribute("loginUser", sessionUserDto);
 
         return ResponseEntity.status(
-                SuccessCode.LOGIN_SUCCESS.getHttpStatus()).body(
-                        ApiResponseDto.success(SuccessCode.LOGIN_SUCCESS));
+            SuccessCode.LOGIN_SUCCESS.getHttpStatus()).body(
+            ApiResponseDto.success(SuccessCode.LOGIN_SUCCESS));
     }
 
     @PutMapping("/logout")
     public ResponseEntity<ApiResponseDto<Void>> logout(
-            HttpServletRequest request
+        HttpServletRequest request
     ) {
         userService.logout(request);
 
         return ResponseEntity.status(
-                SuccessCode.LOGOUT_SUCCESS.getHttpStatus()).body(
-                        ApiResponseDto.success(SuccessCode.LOGOUT_SUCCESS));
+            SuccessCode.LOGOUT_SUCCESS.getHttpStatus()).body(
+            ApiResponseDto.success(SuccessCode.LOGOUT_SUCCESS));
 
     }
 
     @PatchMapping("/withdraw")
     public ResponseEntity<ApiResponseDto<Void>> withdraw(
-            HttpServletRequest request,
-            @RequestBody LoginRequestDto dto
+        HttpServletRequest request,
+        @RequestBody LoginRequestDto dto
     ) {
         userService.withdraw(request, dto);
 
         return ResponseEntity.status(
-                SuccessCode.WITHDRAWAL_SUCCESS.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.WITHDRAWAL_SUCCESS));
+            SuccessCode.WITHDRAWAL_SUCCESS.getHttpStatus()).body(
+            ApiResponseDto.success(SuccessCode.WITHDRAWAL_SUCCESS));
     }
 
 

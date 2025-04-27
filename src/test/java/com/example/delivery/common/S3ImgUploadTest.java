@@ -1,7 +1,7 @@
 package com.example.delivery.common;
 
 
-import com.example.delivery.domain.image.service.ImageService;
+import com.example.delivery.domain.image.service.ImageServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class S3ImgUploadTest {
 
     @Autowired
-    private ImageService s3Service;
+    private ImageServiceImpl s3Service;
 
 //    @Test
 //    void 파일_업로드_테스트() throws IOException {

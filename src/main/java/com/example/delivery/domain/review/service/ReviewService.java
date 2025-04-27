@@ -10,14 +10,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ReviewService {
 
-    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, Long userId, List<MultipartFile> files);
-    
+    public ReviewSaveResponseDto save(ReviewSaveRequestDto requestDto, Long userId,
+        List<MultipartFile> files);
 
-    public void deleteReview(Long reviewId,Long userId);
 
-    public void updateReview(ReviewUpdateRequestDto requestDto,Long userId,Long reviewId);
+    public void deleteReview(Long reviewId, Long userId);
 
-    List<ReviewFindResponseDto> findByFilter(Long storeId,Long rating);
+    public void updateReview(ReviewUpdateRequestDto requestDto, Long userId, Long reviewId,
+        List<MultipartFile> files);
+
+    List<ReviewFindResponseDto> findByFilter(Long storeId, Long rating);
 
     List<ReviewFindResponseDto> findUserId(Long userId);
 }

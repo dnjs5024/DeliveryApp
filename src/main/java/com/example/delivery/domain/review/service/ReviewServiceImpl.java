@@ -3,8 +3,9 @@ package com.example.delivery.domain.review.service;
 import com.example.delivery.common.exception.base.BadRequestException;
 import com.example.delivery.common.exception.base.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
+import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
-import com.example.delivery.domain.image.service.ImageService;
+import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
@@ -32,7 +33,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final StoreRepository storeRepository;
 
-    private final ImageService imageUploadService;
+    private final ImageServiceImpl imageUploadService;
 
 
     /**
@@ -61,9 +62,36 @@ public class ReviewServiceImpl implements ReviewService {
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
             imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW); // 사진이 있으면 저장
         }
+        // 저장 실패면 사진 삭제 고려
         return ReviewSaveResponseDto.toDto(review);
     }
 
+    /**
+     * 본인 맞는지 체크하고 업데이트
+     *
+     * @param requestDto content, rating content 는 null 가능
+     * @param userId     유저 맞는지 체크 위해
+     * @param reviewId   수정 할 리뷰
+     * @param files
+     */
+    @Transactional
+    @Override
+    public void updateReview(
+        ReviewUpdateRequestDto requestDto,
+        Long userId,
+        Long reviewId,
+        List<MultipartFile> files
+    ) {
+        isSelf(userId); //권한 체크
+
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+
+        if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
+            imageUploadService.update(review.getId(), ImageType.REVIEW, files); // 사진이 있으면 저장
+        }
+
+        review.update(requestDto.getContent(), requestDto.getRating());
+    }
 
     /**
      * 여러 필터 조건으로 조회하는 메소드 1.가게 2.별점 순 필터 조건값 제외하면 나머지는 null 임
@@ -124,23 +152,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(Long reviewId, Long userId) {
         isSelf(userId);
-        reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));
-    }
 
+        reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));// 리뷰삭제
 
-    /**
-     * 본인 맞는지 체크하고 업데이트
-     *
-     * @param requestDto content, rating content 는 null 가능
-     * @param userId     유저 맞는지 체크 위해
-     * @param reviewId   수정 할 리뷰
-     */
-    @Transactional
-    @Override
-    public void updateReview(ReviewUpdateRequestDto requestDto, Long userId, Long reviewId) {
-        isSelf(userId);
-        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
-        review.update(requestDto.getContent(), requestDto.getRating());
+        List<ImageResponseDto> list = imageUploadService.find(reviewId, ImageType.REVIEW); // 사진 삭제
+        imageUploadService.delete(list.stream().map(ImageResponseDto::getPKey).toList(),
+            ImageType.REVIEW, reviewId);
     }
 
     /**

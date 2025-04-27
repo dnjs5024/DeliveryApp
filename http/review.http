@@ -13,12 +13,14 @@ Content-Type: application/json
   "content": "리뷰 내용",
   "rating": 5
 }
---MyBoundary
-Content-Disposition: form-data; name="file"; filename="ee.png"
+
+--MyBoundary--
+Content-Disposition: form-data; name="files"; filename="ee.png"
 Content-Type: image/png
 
 < C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png
-Content-Disposition: form-data; name="file"; filename="ww.png"
+--MyBoundary--
+Content-Disposition: form-data; name="files"; filename="ww.png"
 Content-Type: image/png
 
 < C:/Users/dnjs7/OneDrive/사진/스크린샷/ww.png
