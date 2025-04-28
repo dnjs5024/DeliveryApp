@@ -20,6 +20,7 @@ public enum ErrorCode {
     ALREADY_LOGGED_IN(HttpStatus.BAD_REQUEST, "이미 로그인된 사용자입니다."),
     ALREADY_LOGGED_OUT(HttpStatus.BAD_REQUEST, "이미 로그아웃된 사용자입니다."),
     ALREADY_WITHDRAWN(HttpStatus.BAD_REQUEST, "이미 탈퇴한 사용자입니다."),
+    INVALID_REVIEW(HttpStatus.BAD_REQUEST, "완료된 주문 건에 대해서만 리뷰 작성이 가능합니다."),
 
     ORDER_MINIMUM_PRICE(HttpStatus.BAD_REQUEST,"최소 주문 금액을 넘겨주세요."),
     STORE_CLOSED(HttpStatus.BAD_REQUEST, "가게 영업시간이 아닙니다."),
@@ -58,6 +59,7 @@ public enum ErrorCode {
 
     // 500 - Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"파일 업로드에 실패했습니다"),
     TEST_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "테스트 에러입니다.");
 
 
