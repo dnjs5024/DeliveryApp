@@ -110,7 +110,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void update(Long targetId, ImageType imageType, List<MultipartFile> fileList) {
-        delete(find(targetId, imageType).stream().map(ImageResponseDto::getPKey).toList(),
+        delete(find(targetId, imageType).stream().map(ImageResponseDto::getImgKey).toList(),
             imageType, targetId);// 기존 사진 삭제
         fileSave(fileList, targetId, imageType);
     }
