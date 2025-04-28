@@ -1,5 +1,7 @@
 package com.example.delivery.domain.store.entity;
 
+import com.example.delivery.common.exception.CustomException;
+import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.menu.entity.Menu;
 import jakarta.persistence.*;
@@ -24,7 +26,6 @@ public class Store{
 
     @Column(nullable = false)
     private String name;
-    private String description; // 가게 설명
 
     @Column(nullable = false)
     private LocalTime openTime;
@@ -64,6 +65,12 @@ public class Store{
         this.owner = owner;
     }
 
+    public void validateOwner(Long ownerId) {
+        if (!this.owner.getId().equals(ownerId)) {
+            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
+        }
+    }
+
     public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
         this.name = name;
         this.openTime = openTime;
@@ -75,7 +82,5 @@ public class Store{
     public void changeStatus(StoreStatus newStatus) {
         this.status = newStatus;
     }
-
-
 
 }

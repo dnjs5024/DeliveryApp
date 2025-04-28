@@ -1,6 +1,6 @@
 package com.example.delivery.domain.image.repository;
 
-import com.example.delivery.common.exception.base.NotFoundException;
+import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.entity.Image;
 import com.example.delivery.domain.image.entity.ImageType;
