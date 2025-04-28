@@ -1,8 +1,5 @@
 package com.example.delivery.domain.review;
 
-import com.example.delivery.domain.image.dto.ImageResponseDto;
-import com.example.delivery.domain.image.entity.Image;
-import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.menu.entity.Menu;
 import com.example.delivery.domain.menu.repository.MenuRepository;
@@ -24,11 +21,7 @@ import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.entity.User.Role;
 import com.example.delivery.domain.user.repository.UserRepository;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalTime;
@@ -214,11 +207,6 @@ public class ReviewTest {
 
         ReviewSaveRequestDto requestDto = ReviewSaveRequestDto.builder().content("너무 맛있어요!")
             .rating(5).storeId(store.getId()).build();
-
-        // when
-
-
-
         // 진짜 사진
 
         byte[] fileContent1 = Files.readAllBytes(Path.of("C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png"));
@@ -229,6 +217,8 @@ public class ReviewTest {
         List<MultipartFile> files = new ArrayList<>();
         files.add(mockMultipartFile1);
         files.add(mockMultipartFile2);
+
+        // when
 
         ReviewSaveResponseDto responseDto = reviewService.save(requestDto, user.getId(),files); // 실제 저장 서비스 실행
 

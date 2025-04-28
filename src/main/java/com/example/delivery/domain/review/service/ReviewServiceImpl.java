@@ -166,7 +166,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));// 리뷰삭제
         imageUploadService.delete(imageUploadService.find(reviewId, ImageType.REVIEW)// 사진 삭제
                 .stream()
-                .map(ImageResponseDto::getPKey)
+                .map(ImageResponseDto::getImgKey)
                 .toList(),
             ImageType.REVIEW, reviewId);
     }

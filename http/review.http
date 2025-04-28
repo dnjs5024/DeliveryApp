@@ -1,12 +1,14 @@
 
 ### 리뷰 저장 요청 (자동으로 쿠키 붙음)
+# @no-cookie-jar
 POST http://localhost:8080/api/reviews
 Content-Type: multipart/form-data; boundary=MyBoundary
-
+Cookie: JSESSIONID={{JSESSIONID}}
 
 --MyBoundary
 Content-Disposition: form-data; name="request"
 Content-Type: application/json
+
 
 {
   "storeId": 1,

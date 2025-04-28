@@ -145,7 +145,7 @@ public class ImageTest {
 
         //when
         List<ImageResponseDto> image = imageService.find(savedReview.getId(), ImageType.REVIEW);
-        imageService.delete(image.stream().map(ImageResponseDto::getPKey).toList(), ImageType.REVIEW,
+        imageService.delete(image.stream().map(ImageResponseDto::getImgKey).toList(), ImageType.REVIEW,
             savedReview.getId());
 
     }
