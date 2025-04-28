@@ -1,6 +1,6 @@
-package com.example.delivery.menu.dto;
+package com.example.delivery.domain.menu.dto;
 
-import com.example.delivery.menu.entity.Menu;
+import com.example.delivery.domain.menu.entity.Menu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

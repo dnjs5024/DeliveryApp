@@ -1,8 +1,8 @@
-package com.example.delivery.menu.service;
+package com.example.delivery.domain.menu.service;
 
 import com.example.delivery.domain.store.entity.Store;
-import com.example.delivery.menu.dto.RequestDto;
-import com.example.delivery.menu.dto.ResponseDto;
+import com.example.delivery.domain.menu.dto.RequestDto;
+import com.example.delivery.domain.menu.dto.ResponseDto;
 
 import java.util.List;
 
