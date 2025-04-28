@@ -1,7 +1,7 @@
 package com.example.delivery.common.config;
 
 import com.example.delivery.common.constants.BusinessRuleConstants;
-import com.example.delivery.common.exception.base.BadRequestException;
+import com.example.delivery.common.exception.BadRequestException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

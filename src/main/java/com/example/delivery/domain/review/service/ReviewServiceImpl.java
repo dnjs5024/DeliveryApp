@@ -1,7 +1,7 @@
 package com.example.delivery.domain.review.service;
 
-import com.example.delivery.common.exception.base.BadRequestException;
-import com.example.delivery.common.exception.base.NotFoundException;
+import com.example.delivery.common.exception.BadRequestException;
+import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
@@ -166,7 +166,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));// 리뷰삭제
         imageUploadService.delete(imageUploadService.find(reviewId, ImageType.REVIEW)// 사진 삭제
                 .stream()
-                .map(ImageResponseDto::getPKey)
+                .map(ImageResponseDto::getImgKey)
                 .toList(),
             ImageType.REVIEW, reviewId);
     }

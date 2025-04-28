@@ -1,7 +1,7 @@
 package com.example.delivery.domain.user.service;
 
-import com.example.delivery.common.exception.base.BadRequestException;
-import com.example.delivery.common.exception.base.CustomException;
+import com.example.delivery.common.exception.BadRequestException;
+import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.common.config.PasswordEncoder;
 import com.example.delivery.domain.user.dto.LoginRequestDto;

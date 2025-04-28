@@ -1,7 +1,7 @@
 package com.example.delivery.domain.image.service;
 
 
-import com.example.delivery.common.exception.base.BadRequestException;
+import com.example.delivery.common.exception.BadRequestException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.Image;
@@ -110,7 +110,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void update(Long targetId, ImageType imageType, List<MultipartFile> fileList) {
-        delete(find(targetId, imageType).stream().map(ImageResponseDto::getPKey).toList(),
+        delete(find(targetId, imageType).stream().map(ImageResponseDto::getImgKey).toList(),
             imageType, targetId);// 기존 사진 삭제
         fileSave(fileList, targetId, imageType);
     }

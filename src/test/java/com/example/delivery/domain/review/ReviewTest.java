@@ -1,11 +1,16 @@
 package com.example.delivery.domain.review;
 
-import com.example.delivery.domain.image.dto.ImageResponseDto;
-import com.example.delivery.domain.image.entity.Image;
-import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
+import com.example.delivery.domain.menu.entity.Menu;
+import com.example.delivery.domain.menu.repository.MenuRepository;
+import com.example.delivery.domain.order.entity.Order;
+import com.example.delivery.domain.order.entity.OrderMenu;
+import com.example.delivery.domain.order.entity.OrderStatus;
+import com.example.delivery.domain.order.repository.OrderMenuRepository;
+import com.example.delivery.domain.order.repository.OrderRepository;
 import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
 import com.example.delivery.domain.review.dto.ReviewSaveRequestDto;
+import com.example.delivery.domain.review.dto.ReviewSaveResponseDto;
 import com.example.delivery.domain.review.dto.ReviewUpdateRequestDto;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.review.repository.ReviewRepository;
@@ -16,14 +21,12 @@ import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.entity.User.Role;
 import com.example.delivery.domain.user.repository.UserRepository;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @SpringBootTest
+@Transactional
 public class ReviewTest {
 
     @Autowired
@@ -44,9 +48,16 @@ public class ReviewTest {
     @Autowired
     ImageServiceImpl imageUploadService;
     @Autowired
+    MenuRepository menuRepository;
+    @Autowired
+    OrderRepository orderRepository;
+    @Autowired
+    OrderMenuRepository orderMenuRepository;
+    @Autowired
     ReviewService reviewService;
 
     @Test
+
     void 리뷰_업데이트() {
         //기븐이요
         User user = new User("jun@example.com", "encoded-password", Role.USER, "준이");
@@ -167,15 +178,35 @@ public class ReviewTest {
         );
         storeRepository.save(store);
 
+        // 3. 가짜 Menu 생성
+        Menu menu1 = Menu.of(store, "치킨", 18000, "바삭한 후라이드 치킨");
+        Menu menu2 = Menu.of(store, "피자", 22000, "고소한 치즈 피자");
+
+        menuRepository.save(menu1);
+        menuRepository.save(menu2);
+
+        // 4. OrderMenu 생성 (Order는 나중에 연결)
+        OrderMenu orderMenu1 = new OrderMenu(null, menu1, 2); // 치킨 2개
+        OrderMenu orderMenu2 = new OrderMenu(null, menu2, 1); // 피자 1개
+        List<OrderMenu> orderMenus = Arrays.asList(orderMenu1, orderMenu2);
+
+        orderMenuRepository.save(orderMenu1);
+        orderMenuRepository.save(orderMenu2);
+
+        // 5. Order 생성
+        Order order = Order.create(user, store, orderMenus, "초인종 누르지 마세요!");
+
+        orderRepository.save(order);
+
+        // 6. Order를 OrderMenu에 다시 연결
+        orderMenus.forEach(orderMenu -> orderMenu.setOrder(order));
+
+        // 7. 주문 상태를 COMPLETE로 변경
+        order.changeStatus(OrderStatus.COMPLETE);
+
+
         ReviewSaveRequestDto requestDto = ReviewSaveRequestDto.builder().content("너무 맛있어요!")
             .rating(5).storeId(store.getId()).build();
-
-        // when
-        Review review = reviewRepository.save(
-            Review.of(store, user, requestDto.getContent(), requestDto.getRating())
-        );
-
-
         // 진짜 사진
 
         byte[] fileContent1 = Files.readAllBytes(Path.of("C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png"));
@@ -187,6 +218,10 @@ public class ReviewTest {
         files.add(mockMultipartFile1);
         files.add(mockMultipartFile2);
 
+        // when
+
+        ReviewSaveResponseDto responseDto = reviewService.save(requestDto, user.getId(),files); // 실제 저장 서비스 실행
+
 //
 //        // Mock MultipartFile 생성 (이미지 흉내)
 //        MockMultipartFile mockFile = new MockMultipartFile(
@@ -196,13 +231,10 @@ public class ReviewTest {
 //            "image-content".getBytes()      // 파일 내용
 //        );
 //        List<MultipartFile> files = List.of(mockFile);
-        imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW);
+
         // then
-        Review savedReview = reviewRepository.findById(review.getId())
+        Review savedReview = reviewRepository.findById(responseDto.getReviewId())
             .orElseThrow(() -> new RuntimeException("리뷰 저장 실패"));
-
-        List<ImageResponseDto> image = imageUploadService.find(review.getId(),ImageType.REVIEW);//db들어간 데이터 체크
-
 
         assert savedReview.getContent().equals("너무 맛있어요!");
         assert savedReview.getRating() == 5;
