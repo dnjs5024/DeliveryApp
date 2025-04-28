@@ -2,10 +2,10 @@ package com.example.delivery.domain.menu.service;
 
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
-import com.example.delivery.menu.dto.RequestDto;
-import com.example.delivery.menu.dto.ResponseDto;
-import com.example.delivery.menu.entity.Menu;
-import com.example.delivery.menu.repository.MenuRepository;
+import com.example.delivery.domain.menu.dto.RequestDto;
+import com.example.delivery.domain.menu.dto.ResponseDto;
+import com.example.delivery.domain.menu.entity.Menu;
+import com.example.delivery.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

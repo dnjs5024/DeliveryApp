@@ -1,7 +1,8 @@
-package com.example.delivery.menu.repository;
+package com.example.delivery.domain.menu.repository;
 
+import com.example.delivery.domain.menu.entity.Menu;
 import com.example.delivery.domain.store.entity.Store;
-import com.example.delivery.menu.entity.Menu;
+
 import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
