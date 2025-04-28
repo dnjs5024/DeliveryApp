@@ -17,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class LoginFilter implements Filter {
 
-    private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login","/api/review"};
+    private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login"};
     private final UserRepository userRepository;
 
     public LoginFilter(UserRepository userRepository) {

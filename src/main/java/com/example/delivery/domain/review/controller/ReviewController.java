@@ -1,5 +1,6 @@
 package com.example.delivery.domain.review.controller;
 
+import com.example.delivery.common.annotation.ImageValid;
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
 import com.example.delivery.domain.review.dto.ReviewFindResponseDto;
@@ -43,6 +44,7 @@ public class ReviewController {
      * @param files      null 이여도 허용
      * @return 커스텀 응답 성공 201
      */
+    @ImageValid
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ReviewSaveResponseDto>> saveReview(
         @RequestPart("request") @Valid ReviewSaveRequestDto requestDto,
@@ -94,6 +96,7 @@ public class ReviewController {
             .body(ApiResponseDto.success(SuccessCode.REVIEW_DELETED));
     }
 
+    @ImageValid
     @PatchMapping("/{reviewId}")
     public ResponseEntity<ApiResponseDto<?>> updateById(
         @PathVariable("reviewId") @Min(1) Long reviewId,

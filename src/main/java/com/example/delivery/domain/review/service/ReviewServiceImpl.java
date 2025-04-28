@@ -6,6 +6,9 @@ import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
+import com.example.delivery.domain.order.entity.Order;
+import com.example.delivery.domain.order.entity.OrderStatus;
+import com.example.delivery.domain.order.repository.OrderRepository;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
@@ -33,6 +36,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final StoreRepository storeRepository;
 
+    private final OrderRepository orderRepository;
+
     private final ImageServiceImpl imageUploadService;
 
 
@@ -55,6 +60,13 @@ public class ReviewServiceImpl implements ReviewService {
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        Order order = orderRepository.findByStoreIdAndUserIdOrElseThrow(store.getId(), user.getId());
+
+        //완료 한 주문만 리뷰 작성 가능
+        if(order.getOrderStatus() != OrderStatus.COMPLETE){
+            throw new BadRequestException(ErrorCode.INVALID_REVIEW);
+        }
 
         Review review = reviewRepository.save( // 리뷰 저장
             Review.of(store, user, requestDto.getContent(), requestDto.getRating()));
