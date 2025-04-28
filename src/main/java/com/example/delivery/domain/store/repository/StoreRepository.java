@@ -48,5 +48,5 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
         return findById(storeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
     }
-
+ 
 }

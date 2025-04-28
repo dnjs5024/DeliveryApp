@@ -33,28 +33,6 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
 
-    // ============================ 헬퍼 메소드 ===============================
-    // OwnerId 로 User 조회, 없으면
-    // User가 Owner 역할을 갖고 있는지 검증
-    private User findOwnerOrThrow(Long ownerId) {
-        User user = userRepository.findById(ownerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        if (user.getRole() != User.Role.OWNER) {
-            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
-        }
-        return user;
-    }
-
-    // 오픈된 가게 수가 제한을 초과하지 않는지
-    private void validateStoreLimit(Long ownerId) {
-        if (storeRepository.countByOwnerIdAndStatus(ownerId, StoreStatus.OPEN) >= MAX_STORE_LIMIT) {
-            throw new CustomException(ErrorCode.STORE_LIMIT_EXCEEDED);
-        }
-    }
-
-
-
     /**
      * 가게를 생성합니다.
      * 사장님 권한을 가진 유저만 가능하며, 한 명당 최대 3개의 가게까지 생성 가능합니다.
@@ -185,5 +163,25 @@ public class StoreServiceImpl implements StoreService {
         Store store = storeRepository.findByIdOrElseThrow(storeId);
         store.validateOwner(ownerId);
         store.changeStatus(status);
+    }
+
+    // ============================ 헬퍼 메소드 ===============================
+    // OwnerId 로 User 조회, 없으면
+    // User가 Owner 역할을 갖고 있는지 검증
+    private User findOwnerOrThrow(Long ownerId) {
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getRole() != User.Role.OWNER) {
+            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
+        }
+        return user;
+    }
+
+    // 오픈된 가게 수가 제한을 초과하지 않는지
+    private void validateStoreLimit(Long ownerId) {
+        if (storeRepository.countByOwnerIdAndStatus(ownerId, StoreStatus.OPEN) >= MAX_STORE_LIMIT) {
+            throw new CustomException(ErrorCode.STORE_LIMIT_EXCEEDED);
+        }
     }
 }

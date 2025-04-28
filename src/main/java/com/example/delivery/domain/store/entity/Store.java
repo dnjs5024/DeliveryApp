@@ -65,6 +65,12 @@ public class Store{
         this.owner = owner;
     }
 
+    public void validateOwner(Long ownerId) {
+        if (!this.owner.getId().equals(ownerId)) {
+            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
+        }
+    }
+
     public void update(String name, LocalTime openTime, LocalTime closeTime, int minOrderPrice) {
         this.name = name;
         this.openTime = openTime;
@@ -76,12 +82,5 @@ public class Store{
     public void changeStatus(StoreStatus newStatus) {
         this.status = newStatus;
     }
-
-    public void validateOwner(Long ownerId) {
-        if (!this.owner.getId().equals(ownerId)) {
-            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
-        }
-    }
-    // 서비스 -> 스토어 레파지토리 -> 스토어 주인이 누군지 스토어 엔티티
 
 }
