@@ -47,11 +47,4 @@ public class Image extends BaseTimeEntity {
         return new Image(targetId, imgUrl, type, pKey);
     }
 
-    public void update(Long targetId, String imgUrl,ImageType type,String pKey) {
-        this.targetId = targetId;
-        this.imgUrl = imgUrl;
-        this.type = type;
-        this.pKey = pKey;
-    }
-
 }
