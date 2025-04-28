@@ -28,11 +28,32 @@ import static com.example.delivery.common.constants.BusinessRuleConstants.MAX_ST
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+
+    // ============================ 헬퍼 메소드 ===============================
+    // OwnerId 로 User 조회, 없으면
+    // User가 Owner 역할을 갖고 있는지 검증
+    private User findOwnerOrThrow(Long ownerId) {
+        User user = userRepository.findById(ownerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getRole() != User.Role.OWNER) {
+            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
+        }
+        return user;
+    }
+
+    // 오픈된 가게 수가 제한을 초과하지 않는지
+    private void validateStoreLimit(Long ownerId) {
+        if (storeRepository.countByOwnerIdAndStatus(ownerId, StoreStatus.OPEN) >= MAX_STORE_LIMIT) {
+            throw new CustomException(ErrorCode.STORE_LIMIT_EXCEEDED);
+        }
+    }
+
+
 
     /**
      * 가게를 생성합니다.
@@ -46,16 +67,9 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     @Override
     public StoreResponseDto createStore(StoreRequestDto storeRequestDto, Long ownerId) {
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        // 사장님만 생성 가능
-        if (owner.getRole() != User.Role.OWNER) {
-            throw new CustomException(ErrorCode.ONLY_OWNER_CREATE_STORE);
-        }
-        // 가게 수 제한
-        if (storeRepository.countMyOpenStores(owner.getId()) >= MAX_STORE_LIMIT) {
-            throw new CustomException(ErrorCode.STORE_LIMIT);
-        }
+        User owner = findOwnerOrThrow(ownerId);
+        validateStoreLimit(ownerId);
+
         Store store = new Store(
                 storeRequestDto.name(),
                 storeRequestDto.openTime(),
@@ -64,8 +78,8 @@ public class StoreServiceImpl implements StoreService {
                 StoreStatus.OPEN,
                 owner
         );
-        Store savedStore = storeRepository.save(store);
-        return StoreResponseDto.from(savedStore);
+
+        return StoreResponseDto.from(storeRepository.save(store));
     }
 
     /**
@@ -82,11 +96,10 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     @Override
     public StoreResponseDto updateStore(Long storeId, Long ownerId, StoreRequestDto storeRequestDto) {
-        Store store = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);
+        Store store = storeRepository.findByIdOrElseThrow(storeId);//조회
+        store.validateOwner(ownerId);
 
-        // 값 변경 (Setter 대신 명시적인 메서드 또는 직접 할당)
         store.update(storeRequestDto.name(), storeRequestDto.openTime(), storeRequestDto.closeTime(), storeRequestDto.minOrderPrice());
-
         return StoreResponseDto.from(store);
     }
 
@@ -107,14 +120,9 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<StoreResponseDto> getMyStores(Long ownerId) {
-        User user = userRepository.findById(ownerId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        if (user.getRole() != User.Role.OWNER) {
-            throw new CustomException(ErrorCode.ONLY_OWNER_MANAGE_STORE);
-        }
-        return storeRepository.findAllMyStores(user.getId()).stream()
-                .map(StoreResponseDto::from)
-                .collect(Collectors.toList());
+        findOwnerOrThrow(ownerId);
+        List<Store> stores = storeRepository.findAllByOwnerId(ownerId);
+        return stores.stream().map(StoreResponseDto::from).collect(Collectors.toList());
     }
 
 
@@ -174,7 +182,8 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     @Override
     public void changeStoreStatus(Long storeId, Long ownerId, StoreStatus status) {
-        Store store = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
+        store.validateOwner(ownerId);
         store.changeStatus(status);
     }
 }
