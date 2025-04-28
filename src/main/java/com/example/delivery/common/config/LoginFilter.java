@@ -1,7 +1,9 @@
 package com.example.delivery.common.config;
+
+import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.entity.User;
-import com.example.delivery.domain.user.repository.UserRepository;
+import com.example.delivery.domain.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,14 +16,18 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.example.delivery.common.constants.BusinessRuleConstants.LOGIN_USER_SESSION_KEY;
+
 @Slf4j
 public class LoginFilter implements Filter {
 
-    private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login","/api/review"};
-    private final UserRepository userRepository;
+    private static final String STORE_API_PREFIX = "/api/store";
+    private static final String[] WHITE_LIST = {"/api/auth/signup", "/api/auth/login"};
 
-    public LoginFilter(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    private final UserService userService;
+
+    public LoginFilter(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -40,19 +46,7 @@ public class LoginFilter implements Filter {
         if (!isWhiteList(requestURI)) {
             if (session == null || session.getAttribute("loginUser") == null) {
                 HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-                httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                httpResponse.setContentType("application/json;charset=UTF-8");
-
-                Map<String, Object> responseMap = new LinkedHashMap<>();
-                responseMap.put("timestamp", LocalDateTime.now().toString());
-                responseMap.put("statusCode", 401);
-                responseMap.put("message", "인증되지 않은 사용자입니다.");
-                responseMap.put("path", request.getRequestURI());
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                String responseJson = objectMapper.writeValueAsString(responseMap);
-
-                httpResponse.getWriter().write(responseJson);
+                writeResponse(httpResponse,request, ErrorCode.UNAUTHORIZED);
                 return;
             }
         }
@@ -62,32 +56,20 @@ public class LoginFilter implements Filter {
         // session == null 일 경우 NullPointerException 발생하므로 조건문 처리
         if (session != null) {
             // 세션에서 SessionUserDto 객체 가져오기
-            SessionUserDto sessionUserDto = (SessionUserDto) session.getAttribute("loginUser");
+            SessionUserDto sessionUserDto = (SessionUserDto) session.getAttribute(LOGIN_USER_SESSION_KEY);
 
-            // sessionUserDto가 존재하는 경우 User 객체로 변환하거나 필요한 작업 수행
+            // sessionUserDto 가 존재하는 경우 User 객체로 변환하거나 필요한 작업 수행
             if (sessionUserDto != null) {
                 // 이메일을 사용하여 User 엔티티를 조회
-                loginUser = userRepository.findUserByEmailOrElseThrow(sessionUserDto.getEmail());
+                loginUser = userService.findUser((sessionUserDto.getEmail()));
             }
         }
 
-        // 현재 로그인한 유저가 존재하지 않거나, URI가 "/api/store"로 시작하고, 권한이 OWNER가 아닐 경우
+        // 현재 로그인한 유저가 존재하지 않거나, URI : "/api/store"로 시작하고, role : OWNER 가 아닐 경우
         if (loginUser != null) {
-            if (requestURI.startsWith("/api/store") && !loginUser.getRole().equals(User.Role.OWNER)) {
+            if (requestURI.startsWith(STORE_API_PREFIX) && !loginUser.getRole().equals(User.Role.OWNER)) {
                 HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-                httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);  // 403 Forbidden
-                httpResponse.setContentType("application/json;charset=UTF-8");
-
-                Map<String, Object> responseMap = new LinkedHashMap<>();
-                responseMap.put("timestamp", LocalDateTime.now().toString());
-                responseMap.put("statusCode", 403);
-                responseMap.put("message", "사장님 권한이 필요합니다.");
-                responseMap.put("path", request.getRequestURI());
-
-                ObjectMapper objectMapper = new ObjectMapper();
-                String responseJson = objectMapper.writeValueAsString(responseMap);
-
-                httpResponse.getWriter().write(responseJson);
+                writeResponse(httpResponse,request, ErrorCode.OWNER_PERMISSION_REQUIRED);
                 return;
             }
         }
@@ -103,6 +85,23 @@ public class LoginFilter implements Filter {
             }
         }
         return false;
+    }
+
+    void writeResponse(HttpServletResponse servletResponse, HttpServletRequest request, ErrorCode errorCode) throws IOException {
+
+        servletResponse.setStatus(errorCode.getHttpStatus().value());  // 403 Forbiddencreated_at
+        servletResponse.setContentType("application/json;charset=UTF-8");
+
+        Map<String, Object> responseMap = new LinkedHashMap<>();
+        responseMap.put("timestamp", LocalDateTime.now().toString());
+        responseMap.put("statusCode", errorCode.getHttpStatus().value());
+        responseMap.put("message", errorCode.getMessage());
+        responseMap.put("path", request.getRequestURI());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseJson = objectMapper.writeValueAsString(responseMap);
+
+        servletResponse.getWriter().write(responseJson);
     }
 
 

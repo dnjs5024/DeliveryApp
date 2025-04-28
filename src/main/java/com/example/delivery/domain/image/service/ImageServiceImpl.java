@@ -8,8 +8,8 @@ import com.example.delivery.domain.image.entity.Image;
 import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.repository.ImageRepository;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -44,11 +45,11 @@ public class ImageServiceImpl implements ImageService {
      * @return
      */
     @Override
-    public Map<String, Object> uploadFile(List<MultipartFile> fileList) {
-
-        Map<String, Object> urlMap = new HashMap<>();
+    public List<Map<String, Object>> uploadFile(List<MultipartFile> fileList) throws IOException {
+        List<Map<String, Object>> returnList = new ArrayList<>(); // 업로드한 사진 정보 담아서 리턴
 
         for (MultipartFile file : fileList) {
+            Map<String, Object> urlMap = new HashMap<>(); // url, key 맵에 저장
             String key = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -56,20 +57,16 @@ public class ImageServiceImpl implements ImageService {
                 .key(key)  // 버킷 내 저장할 경로 (위에서 만든 고유 파일명)
                 .contentType(file.getContentType()) // 타입 image/png
                 .build();
-            try {
-                s3Client.putObject(putObjectRequest,
-                    RequestBody.fromBytes(file.getBytes()));
-            } catch (IOException e) {
-                throw new BadRequestException(ErrorCode.INTERNAL_SERVER_ERROR);
-            }
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
             urlMap.put("url", "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key);
             urlMap.put("key", key);
+            returnList.add(urlMap);
         }
-        return urlMap;
+        return returnList;
     }
 
     /**
-     * 이미지 파일 db에 저장
+     * aws 에 사진 업로드 하고 이미지 파일 db에 저장
      *
      * @param files    이미지 파일
      * @param targetId 타겟 식별자 ex) 가게 , 리뷰 등
@@ -77,13 +74,25 @@ public class ImageServiceImpl implements ImageService {
      */
     @Override
     public void fileSave(List<MultipartFile> files, Long targetId, ImageType type) {
-        Map<String, Object> urlMap = uploadFile(files); // 클라우드 서버에 사진 업로드
-        Iterator<String> iterator = urlMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            String url = (String) urlMap.get(iterator.next());
-            String key = (String) urlMap.get(iterator.next());
-            imageRepository.save(Image.of(targetId, url, type, key));
+        List<String> uploadedKey = new ArrayList<>(); // 업로드 성공한 키 저장
+        try {// db에 저장 실패 or aws 에 업로드 실패 시 에러
+            uploadFile(files).forEach(data -> {
+                String url = (String) data.get("url");
+                String key = (String) data.get("key");
+                imageRepository.save(Image.of(targetId, url, type, key));
+                uploadedKey.add(key);
+            });
+        } catch (Exception e) {
+            for (String key : uploadedKey) {
+                DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder() // aws 에 이미 올라간 이미지 삭제
+                    .bucket(bucketName)  // 연결 된 대상 버킷 이름
+                    .key(key)  // 버킷 내 삭제할 객체 키
+                    .build();
+                s3Client.deleteObject(deleteObjectRequest);
+            }
+            throw new BadRequestException(ErrorCode.FILE_UPLOAD_FAILED); // 리뷰 저장 롤백위해 오류 날림
         }
+
     }
 
     /**
@@ -103,7 +112,7 @@ public class ImageServiceImpl implements ImageService {
     public void update(Long targetId, ImageType imageType, List<MultipartFile> fileList) {
         delete(find(targetId, imageType).stream().map(ImageResponseDto::getPKey).toList(),
             imageType, targetId);// 기존 사진 삭제
-        uploadFile(fileList);
+        fileSave(fileList, targetId, imageType);
     }
 
     @Override
@@ -115,10 +124,7 @@ public class ImageServiceImpl implements ImageService {
                 .build();
             s3Client.deleteObject(deleteObjectRequest);
         }
-        for(ImageResponseDto responseDto :find(targetId,imageType)){
-            imageRepository.delete(Image.of(targetId,responseDto.getImgUrl(),imageType,responseDto.getPKey()));
-        }
-
+        imageRepository.deleteAll(
+            imageRepository.findByTargetIdAndTypeElseThrow(targetId, imageType));
     }
-
 }

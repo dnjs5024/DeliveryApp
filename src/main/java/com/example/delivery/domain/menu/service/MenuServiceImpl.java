@@ -21,11 +21,8 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRepository menuRepository;
     private final StoreRepository storeRepository;
 
-    public Menu findMenuOrThrow(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MENU_NOT_FOUND));
-    }
-    
+
+
     @Override
     @Transactional
     public ResponseDto create(Long ownerId, RequestDto requestDto) {

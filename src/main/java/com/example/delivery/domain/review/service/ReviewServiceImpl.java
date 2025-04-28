@@ -6,6 +6,9 @@ import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
+import com.example.delivery.domain.order.entity.Order;
+import com.example.delivery.domain.order.entity.OrderStatus;
+import com.example.delivery.domain.order.repository.OrderRepository;
 import com.example.delivery.domain.review.entity.Review;
 import com.example.delivery.domain.store.entity.Store;
 import com.example.delivery.domain.store.repository.StoreRepository;
@@ -33,6 +36,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final StoreRepository storeRepository;
 
+    private final OrderRepository orderRepository;
+
     private final ImageServiceImpl imageUploadService;
 
 
@@ -56,13 +61,19 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
+        Order order = orderRepository.findByStoreIdAndUserIdOrElseThrow(store.getId(), user.getId());
+
+        //완료 한 주문만 리뷰 작성 가능
+        if(order.getOrderStatus() != OrderStatus.COMPLETE){
+            throw new BadRequestException(ErrorCode.INVALID_REVIEW);
+        }
+
         Review review = reviewRepository.save( // 리뷰 저장
             Review.of(store, user, requestDto.getContent(), requestDto.getRating()));
 
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
             imageUploadService.fileSave(files, review.getId(), ImageType.REVIEW); // 사진이 있으면 저장
         }
-        // 저장 실패면 사진 삭제 고려
         return ReviewSaveResponseDto.toDto(review);
     }
 
@@ -86,11 +97,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review review = reviewRepository.findByIdOrElseThrow(reviewId);
 
+        review.update(requestDto.getContent(), requestDto.getRating());
+
         if (files != null && !files.isEmpty()) { // 이미지가 있는지 체크
             imageUploadService.update(review.getId(), ImageType.REVIEW, files); // 사진이 있으면 저장
         }
-
-        review.update(requestDto.getContent(), requestDto.getRating());
     }
 
     /**
@@ -152,11 +163,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public void deleteReview(Long reviewId, Long userId) {
         isSelf(userId);
-
         reviewRepository.delete(reviewRepository.findByIdOrElseThrow(reviewId));// 리뷰삭제
-
-        List<ImageResponseDto> list = imageUploadService.find(reviewId, ImageType.REVIEW); // 사진 삭제
-        imageUploadService.delete(list.stream().map(ImageResponseDto::getPKey).toList(),
+        imageUploadService.delete(imageUploadService.find(reviewId, ImageType.REVIEW)// 사진 삭제
+                .stream()
+                .map(ImageResponseDto::getPKey)
+                .toList(),
             ImageType.REVIEW, reviewId);
     }
 

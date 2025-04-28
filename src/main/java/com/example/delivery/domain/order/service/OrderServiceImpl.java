@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
         return foundOrder.map(OrderResponseDTO::toDTO);
     }
 
-//    가게사장 주문상세보기
+    //    가게사장 주문상세보기
     @Override
     @Transactional
     public OrderResponseDTO getDetail(Long userId, Long storeId, Long orderId) {
@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
         // owner 검증
         foundStore.validateOwner(userId);
 
-       //주문 검증
+        //주문 검증
         Order foundOrder = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
 
         return OrderResponseDTO.toDTO(foundOrder);

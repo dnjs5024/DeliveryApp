@@ -19,13 +19,20 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Long storeId,
             Pageable pageable
     );
-//   (메뉴 정보까지 Fetch join)
+    //   (메뉴 정보까지 Fetch join)
     @EntityGraph(attributePaths = {"orderMenuList", "orderMenuList.menu"})
     Optional<Order> findByIdAndStoreId(Long orderId, Long storeId);
 
     default Order findByIdAndStoreIdOrElseThrow(Long orderId, Long storeId) {
         return findByIdAndStoreId(orderId, storeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    Optional<Order> findByStoreIdAndUserId(Long storeId, Long userId); // 내 주문 조회
+
+    default Order findByStoreIdAndUserIdOrElseThrow(Long storeId, Long userId) {
+        return findByStoreIdAndUserId(storeId, userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
     }
 
 }
