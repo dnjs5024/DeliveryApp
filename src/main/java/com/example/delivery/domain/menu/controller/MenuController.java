@@ -5,7 +5,7 @@ import com.example.delivery.common.response.ApiResponseDto;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.menu.dto.RequestDto;
 import com.example.delivery.domain.menu.dto.ResponseDto;
-import com.example.delivery.domain.menu.service.MenuServiceImpl;
+import com.example.delivery.domain.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MenuController {
 
-    private final MenuServiceImpl menuService;
+    private final MenuService menuService;
 
 
     @PostMapping

@@ -1,4 +1,4 @@
-package com.example.delivery.common.exception.base;
+package com.example.delivery.common.exception;
 
 import com.example.delivery.common.exception.enums.ErrorCode;
 

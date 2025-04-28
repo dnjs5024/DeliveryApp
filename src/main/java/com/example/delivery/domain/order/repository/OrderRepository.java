@@ -1,6 +1,6 @@
 package com.example.delivery.domain.order.repository;
 
-import com.example.delivery.common.exception.base.CustomException;
+import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.order.entity.Order;
 import org.springframework.data.domain.Pageable;
