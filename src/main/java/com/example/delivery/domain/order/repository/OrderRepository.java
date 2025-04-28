@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Long storeId,
             Pageable pageable
     );
-//   (메뉴 정보까지 Fetch join)
+    //   (메뉴 정보까지 Fetch join)
     @EntityGraph(attributePaths = {"orderMenuList", "orderMenuList.menu"})
     Optional<Order> findByIdAndStoreId(Long orderId, Long storeId);
 

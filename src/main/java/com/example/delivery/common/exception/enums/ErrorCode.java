@@ -36,6 +36,7 @@ public enum ErrorCode {
     ONLY_OWNER_CREATE_STORE(HttpStatus.FORBIDDEN, "사장님 권한이 있는 사용자만 가게를 생성할 수 있습니다."),
     ONLY_OWNER_MANAGE_STORE(HttpStatus.FORBIDDEN, "본인 가게만 수정/폐업할 수 있습니다."),
     ONLY_CUSTOMER_ORDER(HttpStatus.FORBIDDEN, "고객만 주문할 수 있습니다."),
+    OWNER_PERMISSION_REQUIRED(HttpStatus.FORBIDDEN, "사장님 권한이 필요합니다."),
 
     // 404 - Not Found (리소스 없음)
     NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),

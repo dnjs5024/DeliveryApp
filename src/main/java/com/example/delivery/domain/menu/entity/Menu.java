@@ -1,4 +1,4 @@
-package com.example.delivery.menu.entity;
+package com.example.delivery.domain.menu.entity;
 
 import com.example.delivery.common.entity.BaseTimeEntity;
 import com.example.delivery.domain.store.entity.Store;

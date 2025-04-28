@@ -13,8 +13,8 @@ import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.dto.SessionUserDto;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.repository.UserRepository;
-import com.example.delivery.menu.entity.Menu;
-import com.example.delivery.menu.repository.MenuRepository;
+import com.example.delivery.domain.menu.entity.Menu;
+import com.example.delivery.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -91,14 +91,14 @@ public class OrderServiceImpl implements OrderService {
         return foundOrder.map(OrderResponseDTO::toDTO);
     }
 
-//    가게사장 주문상세보기
+    //    가게사장 주문상세보기
     @Override
     @Transactional
     public OrderResponseDTO getDetail(Long userId, Long storeId, Long orderId) {
         //가게 & Owner 검증
         Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
 
-       //주문 검증
+        //주문 검증
         Order foundOrder = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
 
         return OrderResponseDTO.toDTO(foundOrder);

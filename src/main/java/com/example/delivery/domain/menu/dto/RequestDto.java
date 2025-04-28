@@ -1,4 +1,4 @@
-package com.example.delivery.menu.dto;
+package com.example.delivery.domain.menu.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
