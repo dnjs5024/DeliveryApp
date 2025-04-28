@@ -109,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponseDTO changeStatus(Long ownerId, Long storeId, Long orderId, OrderStatus orderStatus) {
         //가게 권한
-        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);  // 2) 주문 조회 + 예외
+        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);
         //주문검증 , 엔티티 가져오기
         Order order = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
 
@@ -117,11 +117,8 @@ public class OrderServiceImpl implements OrderService {
         if(!order.getOrderStatus().isNext(orderStatus)) {
             throw new CustomException(ErrorCode.ORDER_STATUS_CHANGE_NOT_ALLOWED);
         }
-        log.info(order.getOrderStatus().toString());
         //상태변경 update
-        log.info("+++==상태변경 ");
         order.changeStatus(orderStatus);
-        log.info(order.getOrderStatus().toString());
 
         //toDTO
         return OrderResponseDTO.toDTO(order);
