@@ -1,6 +1,6 @@
 package com.example.delivery.domain.order.service;
 
-import com.example.delivery.common.exception.base.CustomException;
+import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.order.dto.requestDTO.OrderRequestDTO;
 import com.example.delivery.domain.order.dto.responseDTO.OrderResponseDTO;
@@ -45,8 +45,8 @@ public class OrderServiceImpl implements OrderService {
 //       유저,가게
         User foundUser = userRepository.findById(sessionUserDto.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Store foundStore = storeRepository.findById(requestDTO.getStoreId())
-                .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
+        //Store foundStore = storeRepository.findById(requestDTO.getStoreId()).orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
+        Store foundStore = storeRepository.findByIdOrElseThrow(requestDTO.getStoreId());
 
         //영업시간 검증
         //현재시간(서울) 가져오기
@@ -83,7 +83,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Slice<OrderResponseDTO> getStoreOrders(Long userId,Long storeId, Pageable pageable) {
         //Owner 가게인지 검증
-        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
+        //Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
+
+        // store 조회
+        Store foundStore = storeRepository.findByIdOrElseThrow(storeId);
+        // owner 검증
+        foundStore.validateOwner(userId);
 
         //owner 주문목록(slice) 조회
         Slice<Order> foundOrder = orderRepository.findByStoreIdOrderByIdDesc(foundStore.getId(), pageable);
@@ -96,7 +101,12 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderResponseDTO getDetail(Long userId, Long storeId, Long orderId) {
         //가게 & Owner 검증
-        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
+        //Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, userId);
+
+        // store 조회
+        Store foundStore = storeRepository.findByIdOrElseThrow(storeId);
+        // owner 검증
+        foundStore.validateOwner(userId);
 
         //주문 검증
         Order foundOrder = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
@@ -108,8 +118,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDTO changeStatus(Long ownerId, Long storeId, Long orderId, OrderStatus orderStatus) {
-        //가게 권한
-        Store foundStore = storeRepository.findMyStoreOrElseThrow(storeId, ownerId);  // 2) 주문 조회 + 예외
+        // store 조회
+        Store foundStore = storeRepository.findByIdOrElseThrow(storeId);
+        // owner 검증
+        foundStore.validateOwner(ownerId);
+
+          // 2) 주문 조회 + 예외
         //주문검증 , 엔티티 가져오기
         Order order = orderRepository.findByIdAndStoreIdOrElseThrow(orderId, foundStore.getId());
 

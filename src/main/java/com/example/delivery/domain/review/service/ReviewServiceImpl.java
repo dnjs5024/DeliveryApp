@@ -1,7 +1,7 @@
 package com.example.delivery.domain.review.service;
 
-import com.example.delivery.common.exception.base.BadRequestException;
-import com.example.delivery.common.exception.base.NotFoundException;
+import com.example.delivery.common.exception.BadRequestException;
+import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
 import com.example.delivery.domain.image.dto.ImageResponseDto;
 import com.example.delivery.domain.image.entity.ImageType;
