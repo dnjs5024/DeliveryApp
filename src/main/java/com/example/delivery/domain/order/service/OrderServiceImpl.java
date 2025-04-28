@@ -131,11 +131,8 @@ public class OrderServiceImpl implements OrderService {
         if(!order.getOrderStatus().isNext(orderStatus)) {
             throw new CustomException(ErrorCode.ORDER_STATUS_CHANGE_NOT_ALLOWED);
         }
-        log.info(order.getOrderStatus().toString());
         //상태변경 update
-        log.info("+++==상태변경 ");
         order.changeStatus(orderStatus);
-        log.info(order.getOrderStatus().toString());
 
         //toDTO
         return OrderResponseDTO.toDTO(order);

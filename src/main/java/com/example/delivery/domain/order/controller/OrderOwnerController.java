@@ -43,66 +43,19 @@ public class OrderOwnerController {
         return ResponseEntity.status(SuccessCode.OK.getHttpStatus())
                 .body(ApiResponseDto.success(SuccessCode.OK, detail));
     }
-
-    //주문 수락 ACCEPT
-    @PatchMapping("/store/{storeId}/orders/{orderId}/accept")
-    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> acceptOrder(
+    @PatchMapping("/store/{storeId}/orders/{orderId}/status/{status}")
+    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> updateStatus(
             @SessionAttribute("loginUser") SessionUserDto user,
             @PathVariable Long storeId,
-            @PathVariable Long orderId) {
+            @PathVariable Long orderId,
+            @PathVariable OrderStatus status
+    ) {
+        OrderResponseDTO updated =
+                orderService.changeStatus(user.getId(), storeId, orderId, status);
 
-        OrderResponseDTO updated = orderService.changeStatus(user.getId(), storeId, orderId, OrderStatus.ACCEPT);
-
-        return ResponseEntity.status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus())
+        return ResponseEntity
+                .status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus())
                 .body(ApiResponseDto.success(SuccessCode.ORDER_STATUS_UPDATED, updated));
     }
-    //주문 거절 REJECT
-    @PatchMapping("/store/{storeId}/orders/{orderId}/reject")
-    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> rejectOrder(
-            @SessionAttribute("loginUser") SessionUserDto user,
-            @PathVariable Long storeId,
-            @PathVariable Long orderId) {
-
-        OrderResponseDTO updated = orderService.changeStatus(user.getId(), storeId, orderId, OrderStatus.REJECT);
-
-        return ResponseEntity.status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.ORDER_STATUS_UPDATED,updated));
-    }
-    //음식 준비중  PREPARE
-    @PatchMapping("/store/{storeId}/orders/{orderId}/prepare")
-    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> prepareOrder(
-            @SessionAttribute("loginUser") SessionUserDto user,
-            @PathVariable Long storeId,
-            @PathVariable Long orderId) {
-
-        OrderResponseDTO updated = orderService.changeStatus(user.getId(), storeId, orderId, OrderStatus.PREPARE);
-
-        return ResponseEntity.status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.ORDER_STATUS_UPDATED,updated));
-    }
-//    음식 배달중 DELIVER("배달 중"),
-    @PatchMapping("/store/{storeId}/orders/{orderId}/deliver")
-    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> deliverOrder(
-            @SessionAttribute("loginUser") SessionUserDto user,
-            @PathVariable Long storeId,
-            @PathVariable Long orderId) {
-
-        OrderResponseDTO updated = orderService.changeStatus(user.getId(), storeId, orderId, OrderStatus.DELIVER);
-
-        return ResponseEntity.status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.ORDER_STATUS_UPDATED,updated));
-    }
-
-    //음식 주문 완료 COMPLETE("주문 완료"),
-    @PatchMapping("/store/{storeId}/orders/{orderId}/complete")
-    public ResponseEntity<ApiResponseDto<OrderResponseDTO>> completeOrder(
-            @SessionAttribute("loginUser") SessionUserDto user,
-            @PathVariable Long storeId,
-            @PathVariable Long orderId) {
-
-        OrderResponseDTO updated = orderService.changeStatus(user.getId(), storeId, orderId, OrderStatus.COMPLETE);
-
-        return ResponseEntity.status(SuccessCode.ORDER_STATUS_UPDATED.getHttpStatus()).body(
-                ApiResponseDto.success(SuccessCode.ORDER_STATUS_UPDATED,updated));
-        }
 }
+
