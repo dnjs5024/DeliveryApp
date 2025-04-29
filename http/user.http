@@ -1,0 +1,13 @@
+### 로그아웃 (세션 필요)
+PUT http://localhost:8080/api/auth/logout
+Cookie: JSESSIONID={{JSESSIONID}}
+
+### 회원 탈퇴 (세션 필요)
+PATCH http://localhost:8080/api/auth/withdraw
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "email": "test2@example.com",
+  "password": "Abcd1234!"
+}

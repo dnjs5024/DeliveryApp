@@ -1,0 +1,57 @@
+### 메뉴 생성
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "id": 1,
+  "name": "불고기 버거",
+  "price": 6500,
+  "description": "매콤한 불고기 맛의 버거입니다"
+}
+
+###
+### 메뉴 생성
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "id": 1,
+  "name": "치즈 버거",
+  "price": 4000,
+  "description": "그냥 치즈 맛의 버거입니다"
+}
+
+###
+### 메뉴 생성
+POST http://localhost:8080/api/menus
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "id": 1,
+  "name": "새우 버거",
+  "price": 5000,
+  "description": "새우 맛의 버거입니다"
+}
+
+###
+
+### 메뉴 수정
+PUT http://localhost:8080/api/menus/2
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "id": 2,
+  "name": "더블 치즈 버거",
+  "price": 7000,
+  "description": "치즈버거 진화"
+}
+
+###
+
+### 메뉴 삭제
+DELETE http://localhost:8080/api/menus/3
+Cookie: JSESSIONID={{JSESSIONID}}

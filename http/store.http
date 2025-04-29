@@ -1,0 +1,50 @@
+### 가게 생성
+POST http://localhost:8080/api/stores
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "name": "햄버거 가게",
+  "openTime": "09:00:00",
+  "closeTime": "22:00:00",
+  "minOrderPrice": 10000
+}
+### 가게 생성 2
+POST http://localhost:8080/api/stores
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "name": "피자 가게",
+  "openTime": "10:00:00",
+  "closeTime": "22:00:00",
+  "minOrderPrice": 18000
+}
+
+### 내 가게 수정
+PUT http://localhost:8080/api/stores/my/1
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "name": "햄버거 가게",
+  "openTime": "10:00:00",
+  "closeTime": "23:00:00",
+  "minOrderPrice": 12000
+}
+### 가게 상태 변경
+PATCH http://localhost:8080/api/stores/my/2/status?status=CLOSED
+Cookie: JSESSIONID={{JSESSIONID}}
+
+### 페이지 기반 전체 가게 조회
+GET http://localhost:8080/api/stores/pages?keyword=가게&page=0&size=10
+Cookie: JSESSIONID={{JSESSIONID}}
+
+
+### 내 가게 전체 보기
+GET http://localhost:8080/api/stores/my
+Cookie: JSESSIONID={{JSESSIONID}}
+
+### 가게 단건 조회
+GET http://localhost:8080/api/stores/1
+Cookie: JSESSIONID={{JSESSIONID}}

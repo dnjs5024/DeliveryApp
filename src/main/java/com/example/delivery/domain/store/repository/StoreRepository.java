@@ -27,7 +27,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Optional<Store> findByIdAndOwnerId(Long id, Long ownerId);
 
     // 특정 가게 단건 조회 ( 폐업중인 가게는 조회 못함, 가게 단건 조회 시 그 가게의 메뉴도 보임 )
-    @Query("select s from Store s join fetch s.menus m where s.id = :id and s.status = :status")
+    @Query("select s from Store s left join fetch s.menus m where s.id = :id and s.status = :status")
     Optional<Store> findWithMenuByIdAndStatus(@Param("id")Long id, @Param("status") StoreStatus status);
 
     // 이름으로 검색하여 폐업 제외한 가게 리스트 조회 (페이지네이션)

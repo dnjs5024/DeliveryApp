@@ -2,6 +2,7 @@ package com.example.delivery.domain.store.controller;
 
 import com.example.delivery.common.exception.enums.SuccessCode;
 import com.example.delivery.common.response.ApiResponseDto;
+import com.example.delivery.domain.store.dto.StoreFindResponseDto;
 import com.example.delivery.domain.store.dto.StoreRequestDto;
 import com.example.delivery.domain.store.dto.StoreResponseDto;
 import com.example.delivery.domain.store.entity.StoreStatus;
@@ -52,8 +53,8 @@ public class StoreController {
      * 가게 단건 조회 API
      */
     @GetMapping("/{storeId}")
-    public ResponseEntity<ApiResponseDto<StoreResponseDto>> getStore(@PathVariable Long storeId) {
-        StoreResponseDto responseDto = storeService.getStore(storeId);
+    public ResponseEntity<ApiResponseDto<StoreFindResponseDto>> getStore(@PathVariable Long storeId) {
+        StoreFindResponseDto responseDto = storeService.getStore(storeId);
         return ResponseEntity.ok(ApiResponseDto.success(SuccessCode.STORE_READ_SUCCESS, responseDto));
 
     }

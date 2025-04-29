@@ -45,7 +45,7 @@ public class MenuController {
 
     @DeleteMapping("/{menuId}")
     public ResponseEntity<Void> deleteMenu(
-            @SessionAttribute SessionUserDto sessionUserDto,
+            @SessionAttribute("loginUser") SessionUserDto sessionUserDto,
             @PathVariable Long menuId) {
         menuService.delete(sessionUserDto.getId(), menuId);
         return ResponseEntity.noContent().build();

@@ -1,12 +1,11 @@
 
 ### 리뷰 저장 요청 (자동으로 쿠키 붙음)
-# @no-cookie-jar
 POST http://localhost:8080/api/reviews
-Content-Type: multipart/form-data; boundary=MyBoundary
+Content-Type: multipart/form-data; boundary=boundary
 Cookie: JSESSIONID={{JSESSIONID}}
 
---MyBoundary
-Content-Disposition: form-data; name="request"
+--boundary
+Content-Disposition: form-data; name="requestDto"
 Content-Type: application/json
 
 
@@ -16,43 +15,57 @@ Content-Type: application/json
   "rating": 5
 }
 
---MyBoundary--
+--boundary
+Content-Disposition: form-data; name="files"; filename="join.png"
+Content-Type: image/png
+
+< C:/Users/dnjs7/OneDrive/사진/스크린샷/join.png
+--boundary
 Content-Disposition: form-data; name="files"; filename="ee.png"
 Content-Type: image/png
 
 < C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png
---MyBoundary--
-Content-Disposition: form-data; name="files"; filename="ww.png"
-Content-Type: image/png
-
-< C:/Users/dnjs7/OneDrive/사진/스크린샷/ww.png
---MyBoundary--
-### 리뷰 삭제 테스트
-DELETE http://localhost:8080/api/reviews/1
-
-### 리뷰 필터 조회 (storeId로 조회)
-GET http://localhost:8080/api/reviews/filter?storeId=1
+--boundary--
+### 가게 별 리뷰 조회
+GET http://localhost:8080/api/reviews?storeId=1
+Cookie: JSESSIONID=YOUR_SESSION_ID
 
 ###
 
-### 리뷰 필터 조회 (rating으로 조회)
+### 별점 기준 리뷰 조회
 GET http://localhost:8080/api/reviews?rating=5
+Cookie: JSESSIONID=YOUR_SESSION_ID
 
 ###
 
-### 내가 쓴 리뷰 조회
-GET http://localhost:8080/api/reviews/user?userId=1
+### 로그인 유저 리뷰 조회
+GET http://localhost:8080/api/reviews/user
+Cookie: JSESSIONID=YOUR_SESSION_ID
+
+###
+
+### 리뷰 삭제
+DELETE http://localhost:8080/api/reviews/1
+Cookie: JSESSIONID=YOUR_SESSION_ID
 
 ###
 
 ### 리뷰 수정
-PATCH http://localhost:8080/api/reviews/3
+PATCH http://localhost:8080/api/reviews/1
+Content-Type: multipart/form-data
+Cookie: JSESSIONID=YOUR_SESSION_ID
+
+--boundary
+Content-Disposition: form-data; name="request"
 Content-Type: application/json
 
 {
-  "content": "내용을 수정했어요!",
+  "content": "수정된 리뷰입니다!",
   "rating": 4
 }
+--boundary
+Content-Disposition: form-data; name="files"; filename="ww.png"
+Content-Type: image/png
 
-###
-
+< C:/Users/dnjs7/OneDrive/사진/스크린샷/ww.png
+--boundary--

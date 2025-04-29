@@ -3,6 +3,8 @@ package com.example.delivery.domain.store.service;
 import com.example.delivery.common.exception.CustomException;
 import com.example.delivery.common.exception.NotFoundException;
 import com.example.delivery.common.exception.enums.ErrorCode;
+import com.example.delivery.domain.menu.entity.Menu;
+import com.example.delivery.domain.store.dto.StoreFindResponseDto;
 import com.example.delivery.domain.store.dto.StoreRequestDto;
 import com.example.delivery.domain.store.dto.StoreResponseDto;
 import com.example.delivery.domain.store.entity.Store;
@@ -10,6 +12,7 @@ import com.example.delivery.domain.store.entity.StoreStatus;
 import com.example.delivery.domain.store.repository.StoreRepository;
 import com.example.delivery.domain.user.entity.User;
 import com.example.delivery.domain.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -90,10 +93,10 @@ public class StoreServiceImpl implements StoreService {
      * @throws CustomException 존재하지 않는 경우
      */
     @Override
-    public StoreResponseDto getStore(Long storeId) {
+    public StoreFindResponseDto getStore(Long storeId) {
         Store store = storeRepository.findWithMenuByIdAndStatus(storeId, StoreStatus.OPEN)
                 .orElseThrow(() -> new CustomException(ErrorCode.STORE_NOT_FOUND));
-        return StoreResponseDto.from(store);
+        return StoreFindResponseDto.from(store);
     }
 
     @Override

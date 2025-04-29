@@ -1,5 +1,6 @@
 package com.example.delivery.domain.review;
 
+import com.example.delivery.common.exception.BadRequestException;
 import com.example.delivery.domain.image.service.ImageServiceImpl;
 import com.example.delivery.domain.menu.entity.Menu;
 import com.example.delivery.domain.menu.repository.MenuRepository;
@@ -31,6 +32,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,12 +60,62 @@ public class ReviewTest {
     @Autowired
     ReviewService reviewService;
 
-    @Test
 
-    void 리뷰_업데이트() {
-        //기븐이요
+    @Transactional
+    @Test
+    void 리뷰_저장_실패_주문_미완료() throws IOException {
+        // given
         User user = new User("jun@example.com", "encoded-password", Role.USER, "준이");
         userRepository.save(user);
+
+        Store store = new Store(
+            "BBQ",
+            LocalTime.of(11, 0),
+            LocalTime.of(23, 0),
+            15000,
+            StoreStatus.OPEN,
+            user
+        );
+        storeRepository.save(store);
+
+        Menu menu = Menu.of(store, "치킨", 18000, "바삭한 후라이드 치킨");
+        menuRepository.save(menu);
+
+        OrderMenu orderMenu = new OrderMenu(null, menu, 2);
+        orderMenuRepository.save(orderMenu);
+
+        Order order = Order.create(user, store, List.of(orderMenu), "조심히 와주세요!");
+        orderRepository.save(order);
+
+        // 주문 상태를 COMPLETE로 변경하지 않음 (즉, 실패 유발)
+
+        orderMenu.setOrder(order); // 관계 연결
+
+        ReviewSaveRequestDto requestDto = ReviewSaveRequestDto.builder()
+            .content("리뷰 작성 시도")
+            .rating(5)
+            .storeId(store.getId())
+            .build();
+
+        byte[] fileContent = Files.readAllBytes(Path.of("C:/Users/dnjs7/OneDrive/사진/스크린샷/ee.png"));
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("files", "ee.png", "image/png", fileContent);
+        List<MultipartFile> files = List.of(mockMultipartFile);
+
+        // when
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
+            reviewService.save(requestDto, user.getId(), files);
+        });
+
+        // then
+        assertEquals("완료된 주문 건에 대해서만 리뷰 작성이 가능합니다.", exception.getMessage());
+    }
+
+
+
+    @Test
+    void 리뷰_업데이트() throws IOException {
+        //기븐이요
+        User user = userRepository.save(new User("jun@example.com", "encoded-password", Role.USER, "준이"));
 
         Store store = new Store(
             "BBQ",
@@ -80,19 +134,17 @@ public class ReviewTest {
         ReviewUpdateRequestDto requestDto = ReviewUpdateRequestDto.builder().content("너무 맛없어요!")
             .rating(1).build();
         // Mock MultipartFile 생성 (이미지 흉내)
-        MockMultipartFile mockFile = new MockMultipartFile(
-            "file",                         // 파라미터 이름
-            "chicken.jpg",                  // 파일 이름
-            "image/jpeg",                   // Content-Type
-            "image-content".getBytes()      // 파일 내용
-        );
-        List<MultipartFile> files = List.of(mockFile);
+        // 진짜 사진
+
+        List<MultipartFile> files = new ArrayList<>();
+
 
         // 웬이요
-        reviewService.updateReview(requestDto, 1L, 1L, files);
+        reviewService.updateReview(requestDto, user.getId(), review.getId(), files);
 
         //업데이트 데이터 체크요 ㅁ니;ㅇ럼냐ㅗㅓ랴매ㅏㅣㅗ
-        List<Review> review2 = reviewRepository.findByUserId(1L);
+        List<Review> review2 = reviewRepository.findByUserId(user.getId());
+
 
         assert review2.get(0).getContent().equals("너무 맛없어요!");
         assert review2.get(0).getRating() == 1;
@@ -102,8 +154,8 @@ public class ReviewTest {
     @Test
     void 내가_작성한_리뷰() {
         //given
-        User user = new User("jun@example.com", "encoded-password", Role.USER, "준이");
-        userRepository.save(user);
+
+        User user =userRepository.save(new User("jun@example.com", "encoded-password", Role.USER, "준이"));
 
         Store store = new Store(
             "BBQ",
@@ -120,7 +172,7 @@ public class ReviewTest {
             Review.of(store, user, "너무 맛있어요!", 5)
         );
 
-        List<ReviewFindResponseDto> review2 = reviewService.findUserId(1L);
+        List<ReviewFindResponseDto> review2 = reviewService.findUserId(user.getId());
 
         assert review2.get(0).getContent().equals("너무 맛있어요!");
         assert review2.get(0).getRating() == 5;
@@ -130,8 +182,7 @@ public class ReviewTest {
     @Test
     void 필터_조회_리뷰데스() {
         //given
-        User user = new User("jun@example.com", "encoded-password", Role.USER, "준이");
-        userRepository.save(user);
+        User user =userRepository.save(new User("jun@example.com", "encoded-password", Role.USER, "준이"));
 
         Store store = new Store(
             "BBQ",
@@ -153,7 +204,7 @@ public class ReviewTest {
         List<ReviewFindResponseDto> list = reviewService.findByFilter(null, 5L);
 
         // ㅁㅇㅁㄴㅇㄴㅁㄹㄴ아ㅣㅓ라ㅣ ㅡㅏㄴ미ㅗ아ㅣㅁ너ㅇ기모띠
-        List<Review> review2 = reviewRepository.findByUserId(1L);
+        List<Review> review2 = reviewRepository.findByUserId(user.getId());
 
         assert list.get(0).getContent().equals("너무 맛있어요!");
         assert list.get(0).getRating() == 5;

@@ -1,0 +1,60 @@
+### [USER] 주문하기
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+Cookie: JSESSIONID={{JSESSIONID}}
+
+{
+  "storeId": 1,
+  "menus": [
+    {
+      "menuId": 1,
+      "quantity": 2
+    },
+    {
+      "menuId": 2,
+      "quantity": 1
+    }
+  ],
+  "requestMessage": "양파 빼주세요"
+}
+
+###
+
+### [OWNER] 매장 주문 목록 조회 (페이징)
+GET http://localhost:8080/api/owner/store/1/orders?page=0&size=5
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+
+### [OWNER] 주문 상세 조회
+GET http://localhost:8080/api/owner/store/1/orders/1
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+### [OWNER] 주문 거절
+PATCH http://localhost:8080/api/owner/store/1/orders/1/status/REJECT
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+
+### [OWNER] 주문 수락
+PATCH http://localhost:8080/api/owner/store/1/orders/1/status/ACCEPT
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+
+### [OWNER] 주문 음식 준비중
+PATCH http://localhost:8080/api/owner/store/1/orders/1/status/PREPARE
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+### [OWNER] 배달 중으로 상태 변경
+PATCH http://localhost:8080/api/owner/store/1/orders/1/status/DELIVER
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###
+### [OWNER] 주문 완료 처리
+PATCH http://localhost:8080/api/owner/store/1/orders/1/status/COMPLETE
+Cookie: JSESSIONID={{JSESSIONID}}
+
+###

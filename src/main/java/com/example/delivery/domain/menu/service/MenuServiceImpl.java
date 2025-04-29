@@ -41,7 +41,7 @@ public class MenuServiceImpl implements MenuService {
     @Transactional
     public ResponseDto update(Long ownerId, Long menuId, RequestDto requestDto) {
         // 1. 메뉴 조회
-        Menu menu = menuRepository.findByIdOrElseThrow(ownerId);
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         // 2. 스토어 오너 검증
         Store store = menu.getStore();
         store.validateOwner(ownerId);
@@ -55,7 +55,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public void delete(Long ownerId, Long menuId) {
-        Menu menu = menuRepository.findByIdOrElseThrow(ownerId);
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         Store store = menu.getStore();
         store.validateOwner(ownerId);
         menu.delete();

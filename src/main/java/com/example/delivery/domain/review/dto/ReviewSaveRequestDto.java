@@ -17,6 +17,10 @@ public class ReviewSaveRequestDto {
     @NotNull
     private final Long storeId;
 
+    @Min(1)
+    @NotNull
+    private final Long orderId;
+
     @Size(max = 50)
     private final String content;
 

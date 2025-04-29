@@ -27,11 +27,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         return findByIdAndStoreId(orderId, storeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
     }
-
-    Optional<Order> findByStoreIdAndUserId(Long storeId, Long userId); // 내 주문 조회
-
-    default Order findByStoreIdAndUserIdOrElseThrow(Long storeId, Long userId) {
-        return findByStoreIdAndUserId(storeId, userId)
+    default Order findByIdOrElseThrow(Long orderId) {
+        return findById(orderId)
             .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
     }
 

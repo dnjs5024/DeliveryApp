@@ -47,7 +47,7 @@ public class ReviewController {
     @ImageValid
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDto<ReviewSaveResponseDto>> saveReview(
-        @RequestPart("request") @Valid ReviewSaveRequestDto requestDto,
+        @RequestPart("requestDto") @Valid ReviewSaveRequestDto requestDto,
         @SessionAttribute(name = "loginUser", required = false) SessionUserDto loginUser, // 유저 아이디
         @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) {

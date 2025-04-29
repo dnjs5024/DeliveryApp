@@ -18,6 +18,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
         );
     }
 
+
     // 특정 가게에서 삭제되지 않은 메뉴만 조회
     List<Menu> findAllByStoreAndDeletedFalse(Store store);
 }

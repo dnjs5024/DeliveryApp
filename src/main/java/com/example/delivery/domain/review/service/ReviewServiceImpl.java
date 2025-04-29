@@ -61,7 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        Order order = orderRepository.findByStoreIdAndUserIdOrElseThrow(store.getId(), user.getId());
+        Order order = orderRepository.findByIdOrElseThrow(requestDto.getOrderId());
 
         //완료 한 주문만 리뷰 작성 가능
         if(order.getOrderStatus() != OrderStatus.COMPLETE){

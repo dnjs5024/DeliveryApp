@@ -1,5 +1,6 @@
 package com.example.delivery.domain.store.service;
 
+import com.example.delivery.domain.store.dto.StoreFindResponseDto;
 import com.example.delivery.domain.store.dto.StoreRequestDto;
 import com.example.delivery.domain.store.dto.StoreResponseDto;
 import com.example.delivery.domain.store.entity.Store;
@@ -35,7 +36,7 @@ public interface StoreService {
      * @param storeId 가게 ID
      * @return 가게 응답 DTO
      */
-    StoreResponseDto getStore(Long storeId); // 가게 단건 조회
+    StoreFindResponseDto getStore(Long storeId); // 가게 단건 조회
     /**
      * 사장님이 운영하는 모든 가게 목록 조회
      *
